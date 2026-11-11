@@ -22,11 +22,12 @@ body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.5 -apple-system,
 header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 h1{font-size:19px;margin:0;font-weight:600;letter-spacing:.2px}
 .ver{font-size:12px;color:var(--dim);border:1px solid var(--line);border-radius:20px;padding:2px 9px}
-.chip{margin-left:auto;font-size:12px;padding:4px 11px;border-radius:20px;border:1px solid var(--line);color:var(--dim)}
+.meta{margin-left:auto;font-size:12px;color:var(--dim)}
+.chip{font-size:12px;margin-left:8px;padding:4px 11px;border-radius:20px;border:1px solid var(--line);color:var(--dim)}
 .chip.on{color:var(--ok);border-color:rgba(62,207,142,.4);background:rgba(62,207,142,.08)}
 .chip.off{color:var(--warn);border-color:rgba(245,196,81,.35);background:rgba(245,196,81,.08)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid{display:grid;grid-template-columns:1.15fr 1fr .7fr;gap:14px}
 .grid .full{grid-column:1/-1}
 label{display:block;font-size:12px;color:var(--dim);margin-bottom:6px}
 input,select,button{font:inherit}
@@ -49,7 +50,12 @@ tr:last-child td{border-bottom:none}
 .st.pending{background:rgba(79,140,255,.12);color:var(--acc)}
 .st.done{background:rgba(62,207,142,.12);color:var(--ok)}
 .st.error{background:rgba(255,107,107,.12);color:var(--err)}
-.del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:13px;white-space:nowrap}
+.rep{font-size:12px;color:var(--warn);white-space:nowrap}
+select.mini{background:transparent;border:1px solid var(--line);color:var(--dim);border-radius:7px;padding:3px 5px;font-size:12px;width:100%}
+.del,.act{background:none;border:none;color:var(--dim);cursor:pointer;font-size:13px;white-space:nowrap}
+td .act{margin-right:10px}
+td.acts{white-space:nowrap;text-align:right}
+.act:hover{color:var(--acc)}
 .del:hover{color:var(--err)}
 .bar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
 .bar .sp{flex:1}
@@ -65,6 +71,7 @@ pre{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:1
   <header>
     <h1>Automation Customize Commit</h1>
     <span class='ver'>V__VERSION__</span>
+    <span class='meta' id='nextInfo'></span>
     <span class='chip' id='agentChip'>代理检测中…</span>
   </header>
 
@@ -90,6 +97,14 @@ pre{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:1
         <input type='text' id='message' value='chore: scheduled commit'>
       </div>
       <div>
+        <label>重复</label>
+        <select id='repeat'>
+          <option value='none'>不重复</option>
+          <option value='daily'>每天</option>
+          <option value='weekly'>每周</option>
+        </select>
+      </div>
+      <div>
         <label>提交内容</label>
         <select id='mode'>
           <option value='file'>追加时间戳到文件</option>
@@ -97,7 +112,7 @@ pre{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:1
           <option value='empty'>空提交</option>
         </select>
       </div>
-      <div>
+      <div style='grid-column:span 2'>
         <label>目标文件（追加模式）</label>
         <input type='text' id='file' value='commit-log.txt'>
       </div>
@@ -117,8 +132,8 @@ pre{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:1
       <button class='ghost' id='agentBtn'>安装后台代理</button>
     </div>
     <table>
-      <thead><tr><th style='width:120px'>时间</th><th style='width:190px'>仓库</th><th>提交信息</th><th style='width:90px'>状态</th><th style='width:64px'></th></tr></thead>
-      <tbody id='jobs'><tr><td colspan='5' class='empty'>暂无任务</td></tr></tbody>
+      <thead><tr><th style='width:108px'>时间</th><th style='width:174px'>仓库</th><th>提交信息</th><th style='width:88px'>重复</th><th style='width:74px'>状态</th><th style='width:104px'></th></tr></thead>
+      <tbody id='jobs'><tr><td colspan='6' class='empty'>暂无任务</td></tr></tbody>
     </table>
   </div>
 
@@ -132,6 +147,7 @@ pre{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:1
 <script>
 const q = s => document.querySelector(s);
 let agentOn = false;
+let nextAt = null;
 
 function toast(msg){
   const t = q('#toast');
@@ -148,6 +164,15 @@ function fmtAt(iso){
   return pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());
 }
 function activeMode(){ return q('#mode').value; }
+
+function tick(){
+  const el = q('#nextInfo');
+  if(!nextAt){ el.textContent = '没有待执行任务'; return; }
+  const ms = new Date(nextAt) - new Date();
+  if(ms <= 0){ el.textContent = '有任务待执行'; return; }
+  const h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000), sec = Math.floor(ms%60000/1000);
+  el.textContent = '下一个 ' + fmtAt(nextAt) + ' · ' + (h ? h+' 小时 ' : '') + m + ' 分 ' + pad(sec) + ' 秒';
+}
 
 document.querySelectorAll('.quick button').forEach(b=>{
   b.onclick = ()=>{
@@ -180,19 +205,34 @@ async function load(){
   const repos = [...new Set(s.jobs.map(j=>j.repo))];
   q('#repos').innerHTML = repos.map(r=>'<option value="'+r+'">').join('');
 
+  nextAt = s.next ? s.next.at : null;
+  tick();
+
   const tb = q('#jobs');
-  if(!s.jobs.length){ tb.innerHTML = "<tr><td colspan='5' class='empty'>暂无任务</td></tr>"; }
+  if(!s.jobs.length){ tb.innerHTML = "<tr><td colspan='6' class='empty'>暂无任务</td></tr>"; }
   else {
     tb.innerHTML = s.jobs.map(j=>{
       const when = fmtAt(j.at) + (j.backdate ? ' <span style="color:#8b95a5">(回填)</span>' : '');
+      const ran = j.last_run ? '<div class="mono">上次 ' + fmtAt(j.last_run) + '</div>' : '';
       const hint = j.last_error ? '<div class="mono" style="color:#ff6b6b">'+j.last_error+'</div>' : '';
+      const opts = [['none','—'],['daily','每天'],['weekly','每周']]
+        .map(([v,t]) => '<option value="'+v+'"'+(j.repeat===v?' selected':'')+'>'+t+'</option>').join('');
       return '<tr><td>'+when+'</td><td class="mono">'+j.repo+'</td>'+
-        '<td>'+j.message+(j.push?'':' <span style="color:#8b95a5">· 仅本地</span>')+hint+'</td>'+
+        '<td>'+j.message+(j.push?'':' <span style="color:#8b95a5">· 仅本地</span>')+ran+hint+'</td>'+
+        '<td><select class="mini" data-id="'+j.id+'">'+opts+'</select></td>'+
         '<td><span class="st '+j.status+'">'+({pending:'待执行',done:'已完成',error:'失败'}[j.status]||j.status)+'</span></td>'+
-        '<td><button class="del" data-id="'+j.id+'">删除</button></td></tr>';
+        '<td class="acts"><button class="act" data-run="'+j.id+'">立即</button><button class="del" data-del="'+j.id+'">删除</button></td></tr>';
     }).join('');
-    tb.querySelectorAll('.del').forEach(b=>b.onclick = async ()=>{
-      await api('/api/jobs/delete',{id:b.dataset.id}); toast('已删除'); load();
+    tb.querySelectorAll('[data-del]').forEach(b=>b.onclick = async ()=>{
+      await api('/api/jobs/delete',{id:b.dataset.del}); toast('已删除'); load();
+    });
+    tb.querySelectorAll('[data-run]').forEach(b=>b.onclick = async ()=>{
+      try{ await api('/api/jobs/run',{id:b.dataset.run}); toast('已执行'); load(); }
+      catch(e){ toast('失败: ' + e.message); }
+    });
+    tb.querySelectorAll('select.mini').forEach(sel=>sel.onchange = async ()=>{
+      try{ await api('/api/jobs/repeat',{id:sel.dataset.id, repeat:sel.value}); toast('已更新重复'); load(); }
+      catch(e){ toast('失败: ' + e.message); }
     });
   }
   q('#log').textContent = s.log.length ? s.log.join('\n') : '（空）';
@@ -206,7 +246,8 @@ q('#add').onclick = async ()=>{
     message: q('#message').value.trim() || 'chore: scheduled commit',
     file: mode==='file' ? (q('#file').value.trim() || 'commit-log.txt') : null,
     push: q('#push').checked,
-    backdate: q('#backdate').checked
+    backdate: q('#backdate').checked,
+    repeat: q('#repeat').value
   };
   if(!body.repo){ return toast('先填仓库路径'); }
   if(!body.at){ return toast('先选执行时间'); }
@@ -231,6 +272,7 @@ q('#agentBtn').onclick = async ()=>{
 
 load();
 setInterval(load, 3000);
+setInterval(tick, 1000);
 </script>
 </body>
 </html>
@@ -280,8 +322,15 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == "/api/jobs":
                 engine.add_job(body.get("repo", ""), body.get("at", ""), body.get("message", ""),
                                file=body.get("file"), branch=body.get("branch"),
-                               push=body.get("push", True), backdate=body.get("backdate", False))
+                               push=body.get("push", True), backdate=body.get("backdate", False),
+                               repeat=body.get("repeat", "none"))
                 return self._send(200, {"ok": True})
+            if self.path == "/api/jobs/run":
+                job = engine.run_job(body.get("id", ""))
+                return self._send(200, {"ok": True, "job": job})
+            if self.path == "/api/jobs/repeat":
+                job = engine.set_repeat(body.get("id", ""), body.get("repeat", "none"))
+                return self._send(200, {"ok": True, "job": job})
             if self.path == "/api/jobs/delete":
                 deleted = engine.delete_job(body.get("id", ""))
                 return self._send(200 if deleted else 404, {"ok": deleted})

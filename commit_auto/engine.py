@@ -14,6 +14,7 @@ VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
 MAX_ATTEMPTS = 5
 TIME_FORMATS = ("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S",
                 "%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%H:%M")
+REPEAT_DELTAS = {"daily": timedelta(days=1), "weekly": timedelta(weeks=1)}
 
 
 def state_dir() -> Path:
@@ -66,10 +67,12 @@ def save_jobs(jobs: list[dict]) -> None:
 
 def add_job(repo: str, at: str, message: str = "chore: scheduled commit", *,
             file: str | None = None, branch: str | None = None,
-            push: bool = True, backdate: bool = False) -> dict:
+            push: bool = True, backdate: bool = False, repeat: str = "none") -> dict:
     path = Path(repo).expanduser().resolve()
     if not (path / ".git").exists():
         raise ValueError(f"{path} 不是 git 仓库")
+    if repeat not in {"none", *REPEAT_DELTAS}:
+        raise ValueError(f"不支持的重复方式: {repeat}")
     when = parse_at(at)
     job = {
         "id": uuid.uuid4().hex[:8],
@@ -80,9 +83,11 @@ def add_job(repo: str, at: str, message: str = "chore: scheduled commit", *,
         "branch": branch or None,
         "push": bool(push),
         "backdate": bool(backdate),
+        "repeat": repeat,
         "status": "pending",
         "attempts": 0,
         "last_error": None,
+        "last_run": None,
         "created_at": datetime.now().isoformat(timespec="seconds"),
     }
     jobs = load_jobs()
@@ -136,6 +141,31 @@ def execute(job: dict, now: datetime | None = None) -> None:
         git(repo, "push", "origin", f"HEAD:{branch}")
 
 
+def _reschedule(job: dict, now: datetime | None = None) -> None:
+    step = REPEAT_DELTAS.get(job.get("repeat") or "none")
+    if not step:
+        return
+    nxt = datetime.fromisoformat(job["at"]) + step
+    now = now or datetime.now()
+    while nxt <= now:
+        nxt += step
+    job.update(status="pending", at=nxt.isoformat(timespec="minutes"), attempts=0)
+
+
+def _attempt(job: dict, now: datetime | None = None) -> bool:
+    try:
+        execute(job, now)
+    except Exception as exc:  # noqa: BLE001 - surfaced to UI, retried next tick
+        job.update(status="error", attempts=job["attempts"] + 1, last_error=str(exc))
+        log(f"ERROR {job['id']} {job['repo']} {exc}")
+        return False
+    job.update(status="done", attempts=job["attempts"] + 1, last_error=None,
+               last_run=datetime.now().isoformat(timespec="seconds"))
+    log(f"OK {job['id']} {job['repo']} {job['message']} push={job['push']}")
+    _reschedule(job)
+    return True
+
+
 def run_due(dry_run: bool = False) -> list[dict]:
     jobs = load_jobs()
     now = datetime.now()
@@ -147,18 +177,34 @@ def run_due(dry_run: bool = False) -> list[dict]:
         if dry_run:
             job["result"] = "would-run"
             continue
-        try:
-            execute(job)
-        except Exception as exc:  # noqa: BLE001 - surfaced to UI, retried next tick
-            job.update(status="error", attempts=job["attempts"] + 1, last_error=str(exc))
-            log(f"ERROR {job['id']} {job['repo']} {exc}")
-        else:
-            job.update(status="done", attempts=job["attempts"] + 1, last_error=None,
-                       done_at=datetime.now().isoformat(timespec="seconds"))
-            log(f"OK {job['id']} {job['repo']} {job['message']} push={job['push']}")
+        _attempt(job, now)
     if due and not dry_run:
         save_jobs(jobs)
     return due
+
+
+def run_job(job_id: str) -> dict:
+    """Run one job immediately, whatever its scheduled time."""
+    jobs = load_jobs()
+    for job in jobs:
+        if job["id"] != job_id:
+            continue
+        _attempt(job)
+        save_jobs(jobs)
+        return job
+    raise KeyError(f"没有任务 {job_id}")
+
+
+def set_repeat(job_id: str, repeat: str) -> dict:
+    if repeat not in {"none", *REPEAT_DELTAS}:
+        raise ValueError(f"不支持的重复方式: {repeat}")
+    jobs = load_jobs()
+    for job in jobs:
+        if job["id"] == job_id:
+            job["repeat"] = repeat
+            save_jobs(jobs)
+            return job
+    raise KeyError(f"没有任务 {job_id}")
 
 
 def next_due(jobs: list[dict]) -> dict | None:

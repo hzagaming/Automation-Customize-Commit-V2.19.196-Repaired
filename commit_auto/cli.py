@@ -9,7 +9,8 @@ from . import agent, engine
 
 def cmd_add(args) -> None:
     job = engine.add_job(args.repo, args.at, args.message, file=args.file,
-                         branch=args.branch, push=not args.no_push, backdate=args.backdate)
+                         branch=args.branch, push=not args.no_push, backdate=args.backdate,
+                         repeat=args.repeat)
     target = "并推送" if job["push"] else "仅本地"
     print(f"已登记 {job['id']}  {job['at']}  {job['repo']}  {target}")
 
@@ -29,6 +30,10 @@ def cmd_rm(args) -> None:
 
 
 def cmd_run(args) -> None:
+    if args.id:
+        job = engine.run_job(args.id)
+        print(f"{job['id']}  {job['status']}  {job['repo']}  {job.get('last_error') or ''}")
+        return
     due = engine.run_due(dry_run=args.dry_run)
     if not due:
         if args.verbose:
@@ -65,6 +70,8 @@ def main() -> None:
     add.add_argument("--branch", help="推送目标分支，默认当前分支")
     add.add_argument("--no-push", action="store_true", help="只提交，不推送到 origin")
     add.add_argument("--backdate", action="store_true", help="commit 时间戳写成 --at 的时间")
+    add.add_argument("--repeat", choices=["none", "daily", "weekly"], default="none",
+                     help="完成后自动排下一次")
     add.set_defaults(func=cmd_add)
 
     sub.add_parser("list", help="查看任务").set_defaults(func=cmd_list)
@@ -74,6 +81,7 @@ def main() -> None:
     rm.set_defaults(func=cmd_rm)
 
     run = sub.add_parser("run", help="执行所有到期任务")
+    run.add_argument("--id", help="无视时间，立即执行指定任务")
     run.add_argument("--dry-run", action="store_true")
     run.add_argument("-v", "--verbose", action="store_true")
     run.set_defaults(func=cmd_run)

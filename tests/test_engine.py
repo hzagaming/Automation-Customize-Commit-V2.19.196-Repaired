@@ -69,6 +69,31 @@ class EngineTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             engine.add_job(str(self.tmp), self.future(), "x")
 
+    def test_repeat_reschedules_after_run(self):
+        stamp = (datetime.now() - timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M")
+        job = engine.add_job(str(self.repo), stamp, "daily", file="log.txt",
+                             push=False, repeat="daily")
+        engine.run_due()
+        after = engine.load_jobs()[0]
+        self.assertEqual(after["status"], "pending")
+        self.assertEqual(after["id"], job["id"])
+        self.assertEqual(after["attempts"], 0)
+        self.assertGreater(datetime.fromisoformat(after["at"]),
+                           datetime.fromisoformat(job["at"]) + timedelta(hours=23))
+
+    def test_run_job_ignores_time(self):
+        job = engine.add_job(str(self.repo), self.future(), "manual", file="log.txt", push=False)
+        self.assertEqual(engine.run_due(), [])
+        engine.run_job(job["id"])
+        self.assertEqual(engine.load_jobs()[0]["status"], "done")
+        self.assertIn("manual", (self.repo / "log.txt").read_text())
+
+    def test_set_repeat_rejects_unknown(self):
+        job = engine.add_job(str(self.repo), self.future(), "x", push=False)
+        self.assertEqual(engine.set_repeat(job["id"], "weekly")["repeat"], "weekly")
+        with self.assertRaises(ValueError):
+            engine.set_repeat(job["id"], "hourly")
+
     def test_bad_time(self):
         with self.assertRaises(ValueError):
             engine.add_job(str(self.repo), "明天", "x")
