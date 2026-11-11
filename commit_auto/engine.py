@@ -1,0 +1,167 @@
+"""Scheduled-commit engine: job store, time parsing, git execution."""
+
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+import uuid
+from datetime import datetime, timedelta
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+MAX_ATTEMPTS = 5
+TIME_FORMATS = ("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S",
+                "%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%H:%M")
+
+
+def state_dir() -> Path:
+    override = os.environ.get("COMMIT_AUTO_HOME")
+    path = Path(override) if override else ROOT / ".state"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def parse_at(text: str) -> datetime:
+    for fmt in TIME_FORMATS:
+        try:
+            moment = datetime.strptime(text.strip(), fmt)
+        except ValueError:
+            continue
+        if fmt == "%H:%M":
+            now = datetime.now()
+            moment = now.replace(hour=moment.hour, minute=moment.minute, second=0, microsecond=0)
+            if moment <= now:
+                moment += timedelta(days=1)
+        return moment
+    raise ValueError(f"无法识别的时间: {text!r}")
+
+
+def log(message: str) -> None:
+    with (state_dir() / "run.log").open("a", encoding="utf-8") as fh:
+        fh.write(f"{datetime.now():%Y-%m-%d %H:%M:%S} {message}\n")
+
+
+def tail_log(lines: int = 40) -> list[str]:
+    path = state_dir() / "run.log"
+    if not path.exists():
+        return []
+    return path.read_text(encoding="utf-8").splitlines()[-lines:]
+
+
+def load_jobs() -> list[dict]:
+    path = state_dir() / "jobs.json"
+    if not path.exists():
+        return []
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def save_jobs(jobs: list[dict]) -> None:
+    path = state_dir() / "jobs.json"
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(jobs, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(path)
+
+
+def add_job(repo: str, at: str, message: str = "chore: scheduled commit", *,
+            file: str | None = None, branch: str | None = None,
+            push: bool = True, backdate: bool = False) -> dict:
+    path = Path(repo).expanduser().resolve()
+    if not (path / ".git").exists():
+        raise ValueError(f"{path} 不是 git 仓库")
+    when = parse_at(at)
+    job = {
+        "id": uuid.uuid4().hex[:8],
+        "repo": str(path),
+        "at": when.isoformat(timespec="minutes"),
+        "message": message,
+        "file": file or None,
+        "branch": branch or None,
+        "push": bool(push),
+        "backdate": bool(backdate),
+        "status": "pending",
+        "attempts": 0,
+        "last_error": None,
+        "created_at": datetime.now().isoformat(timespec="seconds"),
+    }
+    jobs = load_jobs()
+    jobs.append(job)
+    save_jobs(jobs)
+    return job
+
+
+def delete_job(job_id: str) -> bool:
+    jobs = load_jobs()
+    keep = [j for j in jobs if j["id"] != job_id]
+    if len(keep) == len(jobs):
+        return False
+    save_jobs(keep)
+    return True
+
+
+def git(repo: Path, *args: str, env: dict | None = None) -> str:
+    proc = subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True,
+                          env={**os.environ, **(env or {})})
+    if proc.returncode:
+        raise RuntimeError((proc.stderr or proc.stdout).strip().splitlines()[-1] or "git 执行失败")
+    return proc.stdout.strip()
+
+
+def execute(job: dict, now: datetime | None = None) -> None:
+    repo = Path(job["repo"])
+    now = now or datetime.now()
+    stamp = job["at"] if job["backdate"] else now.isoformat(timespec="seconds")
+
+    if job["file"]:
+        target = repo / job["file"]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with target.open("a", encoding="utf-8") as fh:
+            fh.write(f"{stamp} {job['message']}\n")
+        git(repo, "add", "--", job["file"])
+    else:
+        git(repo, "add", "-A")
+
+    env = {}
+    if job["backdate"]:
+        env = {"GIT_AUTHOR_DATE": job["at"], "GIT_COMMITTER_DATE": job["at"]}
+
+    if git(repo, "diff", "--cached", "--name-only"):
+        git(repo, "commit", "-m", job["message"], env=env)
+    else:
+        git(repo, "commit", "--allow-empty", "-m", job["message"], env=env)
+
+    if job["push"]:
+        branch = job["branch"] or git(repo, "rev-parse", "--abbrev-ref", "HEAD")
+        git(repo, "push", "origin", f"HEAD:{branch}")
+
+
+def run_due(dry_run: bool = False) -> list[dict]:
+    jobs = load_jobs()
+    now = datetime.now()
+    due = [j for j in jobs
+           if j["status"] in {"pending", "error"}
+           and j["attempts"] < MAX_ATTEMPTS
+           and datetime.fromisoformat(j["at"]) <= now]
+    for job in sorted(due, key=lambda j: j["at"]):
+        if dry_run:
+            job["result"] = "would-run"
+            continue
+        try:
+            execute(job)
+        except Exception as exc:  # noqa: BLE001 - surfaced to UI, retried next tick
+            job.update(status="error", attempts=job["attempts"] + 1, last_error=str(exc))
+            log(f"ERROR {job['id']} {job['repo']} {exc}")
+        else:
+            job.update(status="done", attempts=job["attempts"] + 1, last_error=None,
+                       done_at=datetime.now().isoformat(timespec="seconds"))
+            log(f"OK {job['id']} {job['repo']} {job['message']} push={job['push']}")
+    if due and not dry_run:
+        save_jobs(jobs)
+    return due
+
+
+def next_due(jobs: list[dict]) -> dict | None:
+    pending = [j for j in jobs if j["status"] in {"pending", "error"}
+               and j["attempts"] < MAX_ATTEMPTS]
+    return min(pending, key=lambda j: j["at"]) if pending else None
