@@ -44,6 +44,14 @@ python3 -m commit_auto.cli install      # 安装 launchd 代理
 - **执行时间**：任务到点才跑，早于当前时间的任务会在下一次轮询立即执行。
 - **commit 时间戳写成所选时间**（`--backdate`）：把 `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` 设成你选的那个时间。适合补历史，但 push 后 GitHub 显示的提交时间就是这个回填值，不是真实执行时间。
 
+## 时间戳的硬边界
+
+Git 内部是 Unix 时间戳，普通 git 命令不接受负值，所以 **1969 年及更早无法作为正常提交时间**：`git commit` 报 `invalid date format`，强行写入被 fsck 判 `badDate`。
+
+还有一个时区技巧：`GIT_AUTHOR_DATE="@0 -1200"`（epoch 0 + 负时区）能写出对象，`git cat-file` 里确实是 `0 -1200`，但**本机 `git log` 立刻报 `fatal: Timestamp before Unix epoch`**，仓库历史在本地就无法正常浏览。CLI 保留了 `--raw-date` 供实验，不建议在真实仓库用。
+
+最早可用：`1970-01-01 00:00:00 UTC`（`@0 +0000`）。
+
 ## 失败重试
 
 commit 或 push 失败会记 `error` 并累计次数，最多重试 5 次，每次轮询都会再试。日志见界面底部，文件在 `.state/run.log`。

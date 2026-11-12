@@ -67,13 +67,14 @@ def save_jobs(jobs: list[dict]) -> None:
 
 def add_job(repo: str, at: str, message: str = "chore: scheduled commit", *,
             file: str | None = None, branch: str | None = None,
-            push: bool = True, backdate: bool = False, repeat: str = "none") -> dict:
+            push: bool = True, backdate: bool = False, repeat: str = "none",
+            raw_date: str | None = None) -> dict:
     path = Path(repo).expanduser().resolve()
     if not (path / ".git").exists():
         raise ValueError(f"{path} 不是 git 仓库")
     if repeat not in {"none", *REPEAT_DELTAS}:
         raise ValueError(f"不支持的重复方式: {repeat}")
-    when = parse_at(at)
+    when = datetime.now() if raw_date else parse_at(at)
     job = {
         "id": uuid.uuid4().hex[:8],
         "repo": str(path),
@@ -82,7 +83,8 @@ def add_job(repo: str, at: str, message: str = "chore: scheduled commit", *,
         "file": file or None,
         "branch": branch or None,
         "push": bool(push),
-        "backdate": bool(backdate),
+        "backdate": bool(backdate or raw_date),
+        "raw_date": raw_date,
         "repeat": repeat,
         "status": "pending",
         "attempts": 0,
@@ -128,7 +130,9 @@ def execute(job: dict, now: datetime | None = None) -> None:
         git(repo, "add", "-A")
 
     env = {}
-    if job["backdate"]:
+    if job.get("raw_date"):
+        env = {"GIT_AUTHOR_DATE": job["raw_date"], "GIT_COMMITTER_DATE": job["raw_date"]}
+    elif job["backdate"]:
         env = {"GIT_AUTHOR_DATE": job["at"], "GIT_COMMITTER_DATE": job["at"]}
 
     if git(repo, "diff", "--cached", "--name-only"):
