@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.197
+# Automation Customize Commit · V2.19.199
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -55,6 +55,14 @@ Git 内部是 Unix 时间戳，普通 git 命令不接受负值，所以 **1969 
 ## 失败重试
 
 commit 或 push 失败会记 `error` 并累计次数，最多重试 5 次，每次轮询都会再试。日志见界面底部，文件在 `.state/run.log`。
+
+## 历史回填
+
+```bash
+python3 -m commit_auto.backfill --repo ~/code/proj --start 1970-01-01 --step 1
+```
+
+用 `git fast-import` 一次性写出从起始日期到今天的每日提交（2 万条约 0.5 秒），不产生文件改动，工作区保持干净。仅用于时间戳研究：GitHub 贡献图只统计最近 12 个月，回填 1970 年不会多出绿色格子。
 
 ## 立即执行
 
