@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.201
+# Automation Customize Commit · V2.19.202
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -55,6 +55,12 @@ Git 内部是 Unix 时间戳，普通 git 命令不接受负值，所以 **1969 
 ## 失败重试
 
 commit 或 push 失败会记 `error` 并累计次数，最多重试 5 次，每次轮询都会再试。日志见界面底部，文件在 `.state/run.log`。
+
+## 多语言与外观
+
+界面右上角可切换 **11 种语言**：English、简体中文、繁體中文、日本語、한국어、Español、Français、Deutsch、Русский、Português、العربية。选 العربية 时整页切换为 RTL 排版，选择会记在浏览器本地，下次打开保持。
+
+外观还可选深色 / 浅色主题和 6 种强调色，同样持久化。新增语言只需在 `commit_auto/i18n.py` 补一套键值，前端不用改。
 
 ## 提交热力图
 

@@ -99,5 +99,18 @@ class EngineTest(unittest.TestCase):
             engine.add_job(str(self.repo), "明天", "x")
 
 
+class I18nTest(unittest.TestCase):
+    def test_every_language_matches_english_keys(self):
+        from commit_auto.i18n import LANGS, I18N
+        base = set(I18N["en"])
+        for code, _ in LANGS:
+            self.assertIn(code, I18N)
+            self.assertEqual(set(I18N[code]), base, f"{code} 缺键或多键")
+
+    def test_at_least_ten_languages(self):
+        from commit_auto.i18n import LANGS
+        self.assertGreaterEqual(len(LANGS), 10)
+
+
 if __name__ == "__main__":
     unittest.main()
