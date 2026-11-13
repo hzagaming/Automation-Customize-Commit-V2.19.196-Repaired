@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.199
+# Automation Customize Commit · V2.19.200
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -55,6 +55,14 @@ Git 内部是 Unix 时间戳，普通 git 命令不接受负值，所以 **1969 
 ## 失败重试
 
 commit 或 push 失败会记 `error` 并累计次数，最多重试 5 次，每次轮询都会再试。日志见界面底部，文件在 `.state/run.log`。
+
+## 全自动提交（sha256）
+
+```bash
+python3 -m commit_auto.auto --repo ~/code/proj --interval 300
+```
+
+常驻进程：每轮生成一个随机 sha256 写进 `hashes.log`，提交信息取前 16 位，然后推送。`--interval` 控制节奏，`--count` 限制轮数（0 = 无限），`--push-every` 控制推送频率。PID 写在 `.state/auto.pid`，`kill $(cat .state/auto.pid)` 即可停止。
 
 ## 历史回填
 
