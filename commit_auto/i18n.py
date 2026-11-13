@@ -16,6 +16,8 @@ LANGS = [
 
 I18N = {
     "en": {
+        "autoTitle": "Auto commits", "autoInterval": "Interval (s)", "autoStart": "Start", "autoStop": "Stop",
+        "autoRunning": "Running · {i}s each", "autoIdle": "Idle", "autoHint": "Min 1s",
         "msgDefault": "chore: scheduled commit", "unitH": "h", "unitM": "m", "unitS": "s",
         "newTask": "New scheduled commit", "repo": "Repository", "repoPh": "/Users/you/code/project",
         "at": "Run at", "msg": "Commit message", "repeat": "Repeat", "content": "Content",
@@ -40,6 +42,8 @@ I18N = {
         "accent": "Accent", "lang": "Language", "onlyLocal": "local only", "backdated": "backdated",
     },
     "zh-CN": {
+        "autoTitle": "全自动提交", "autoInterval": "间隔（秒）", "autoStart": "启动", "autoStop": "停止",
+        "autoRunning": "运行中 · {i}s 一个", "autoIdle": "未运行", "autoHint": "最快 1 秒",
         "msgDefault": "chore: 定时提交", "unitH": "小时", "unitM": "分", "unitS": "秒",
         "newTask": "新建定时提交", "repo": "仓库路径", "repoPh": "/Users/you/code/project",
         "at": "执行时间", "msg": "提交信息", "repeat": "重复", "content": "提交内容",
@@ -64,6 +68,8 @@ I18N = {
         "accent": "强调色", "lang": "语言", "onlyLocal": "仅本地", "backdated": "回填",
     },
     "zh-TW": {
+        "autoTitle": "全自動提交", "autoInterval": "間隔（秒）", "autoStart": "啟動", "autoStop": "停止",
+        "autoRunning": "執行中 · {i}s 一個", "autoIdle": "未執行", "autoHint": "最快 1 秒",
         "msgDefault": "chore: 定時提交", "unitH": "小時", "unitM": "分", "unitS": "秒",
         "newTask": "新增定時提交", "repo": "儲存庫路徑", "repoPh": "/Users/you/code/project",
         "at": "執行時間", "msg": "提交訊息", "repeat": "重複", "content": "提交內容",
@@ -88,6 +94,8 @@ I18N = {
         "accent": "強調色", "lang": "語言", "onlyLocal": "僅本機", "backdated": "回填",
     },
     "ja": {
+        "autoTitle": "自動コミット", "autoInterval": "間隔（秒）", "autoStart": "開始", "autoStop": "停止",
+        "autoRunning": "実行中 · {i} 秒ごと", "autoIdle": "停止中", "autoHint": "最短 1 秒",
         "msgDefault": "chore: 定期コミット", "unitH": "時間", "unitM": "分", "unitS": "秒",
         "newTask": "スケジュール登録", "repo": "リポジトリ", "repoPh": "/Users/you/code/project",
         "at": "実行時刻", "msg": "コミットメッセージ", "repeat": "繰り返し", "content": "コミット内容",
@@ -112,6 +120,8 @@ I18N = {
         "accent": "アクセント", "lang": "言語", "onlyLocal": "ローカルのみ", "backdated": "日時指定",
     },
     "ko": {
+        "autoTitle": "자동 커밋", "autoInterval": "간격(초)", "autoStart": "시작", "autoStop": "중지",
+        "autoRunning": "실행 중 · {i}초마다", "autoIdle": "중지됨", "autoHint": "최소 1초",
         "msgDefault": "chore: 예약 커밋", "unitH": "시간", "unitM": "분", "unitS": "초",
         "newTask": "예약 커밋 만들기", "repo": "저장소 경로", "repoPh": "/Users/you/code/project",
         "at": "실행 시각", "msg": "커밋 메시지", "repeat": "반복", "content": "커밋 내용",
@@ -136,6 +146,8 @@ I18N = {
         "accent": "강조색", "lang": "언어", "onlyLocal": "로컬만", "backdated": "시각 지정",
     },
     "es": {
+        "autoTitle": "Commits automáticos", "autoInterval": "Intervalo (s)", "autoStart": "Iniciar", "autoStop": "Detener",
+        "autoRunning": "Activo · cada {i}s", "autoIdle": "Detenido", "autoHint": "Mínimo 1s",
         "msgDefault": "chore: commit programado", "unitH": "h", "unitM": "min", "unitS": "s",
         "newTask": "Nuevo commit programado", "repo": "Repositorio", "repoPh": "/Users/you/code/project",
         "at": "Ejecutar a las", "msg": "Mensaje", "repeat": "Repetir", "content": "Contenido",
@@ -160,6 +172,8 @@ I18N = {
         "accent": "Acento", "lang": "Idioma", "onlyLocal": "solo local", "backdated": "retroactivo",
     },
     "fr": {
+        "autoTitle": "Commits auto", "autoInterval": "Intervalle (s)", "autoStart": "Démarrer", "autoStop": "Arrêter",
+        "autoRunning": "Actif · toutes les {i}s", "autoIdle": "Arrêté", "autoHint": "Min 1s",
         "msgDefault": "chore: commit planifié", "unitH": "h", "unitM": "min", "unitS": "s",
         "newTask": "Nouveau commit planifié", "repo": "Dépôt", "repoPh": "/Users/you/code/project",
         "at": "Exécuter à", "msg": "Message", "repeat": "Répéter", "content": "Contenu",
@@ -184,6 +198,8 @@ I18N = {
         "accent": "Accent", "lang": "Langue", "onlyLocal": "local seul", "backdated": "rétroactif",
     },
     "de": {
+        "autoTitle": "Auto-Commits", "autoInterval": "Intervall (s)", "autoStart": "Starten", "autoStop": "Stoppen",
+        "autoRunning": "Läuft · alle {i}s", "autoIdle": "Gestoppt", "autoHint": "Min. 1s",
         "msgDefault": "chore: geplanter Commit", "unitH": "Std", "unitM": "Min", "unitS": "Sek",
         "newTask": "Neuer geplanter Commit", "repo": "Repository", "repoPh": "/Users/you/code/project",
         "at": "Ausführen um", "msg": "Nachricht", "repeat": "Wiederholen", "content": "Inhalt",
@@ -208,6 +224,8 @@ I18N = {
         "accent": "Akzent", "lang": "Sprache", "onlyLocal": "nur lokal", "backdated": "rückdatiert",
     },
     "ru": {
+        "autoTitle": "Авто-коммиты", "autoInterval": "Интервал (с)", "autoStart": "Старт", "autoStop": "Стоп",
+        "autoRunning": "Работает · каждые {i}с", "autoIdle": "Остановлено", "autoHint": "Мин. 1с",
         "msgDefault": "chore: плановый коммит", "unitH": "ч", "unitM": "мин", "unitS": "с",
         "newTask": "Новый отложенный коммит", "repo": "Репозиторий", "repoPh": "/Users/you/code/project",
         "at": "Время запуска", "msg": "Сообщение", "repeat": "Повтор", "content": "Содержимое",
@@ -232,6 +250,8 @@ I18N = {
         "accent": "Акцент", "lang": "Язык", "onlyLocal": "только локально", "backdated": "задним числом",
     },
     "pt": {
+        "autoTitle": "Commits automáticos", "autoInterval": "Intervalo (s)", "autoStart": "Iniciar", "autoStop": "Parar",
+        "autoRunning": "Ativo · a cada {i}s", "autoIdle": "Parado", "autoHint": "Mínimo 1s",
         "msgDefault": "chore: commit agendado", "unitH": "h", "unitM": "min", "unitS": "s",
         "newTask": "Novo commit agendado", "repo": "Repositório", "repoPh": "/Users/you/code/project",
         "at": "Executar às", "msg": "Mensagem", "repeat": "Repetir", "content": "Conteúdo",
@@ -256,6 +276,8 @@ I18N = {
         "accent": "Destaque", "lang": "Idioma", "onlyLocal": "só local", "backdated": "retroativo",
     },
     "ar": {
+        "autoTitle": "التزامات تلقائية", "autoInterval": "الفاصل (ث)", "autoStart": "بدء", "autoStop": "إيقاف",
+        "autoRunning": "يعمل · كل {i}ث", "autoIdle": "متوقف", "autoHint": "الحد الأدنى 1ث",
         "msgDefault": "chore: التزام مجدول", "unitH": "س", "unitM": "د", "unitS": "ث",
         "newTask": "التزام مجدول جديد", "repo": "المستودع", "repoPh": "/Users/you/code/project",
         "at": "وقت التنفيذ", "msg": "رسالة الالتزام", "repeat": "التكرار", "content": "المحتوى",

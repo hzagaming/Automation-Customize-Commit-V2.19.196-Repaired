@@ -3,7 +3,12 @@
 from __future__ import annotations
 
 import json
+import os
+import signal
+import subprocess
+import sys
 import webbrowser
+from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
@@ -71,6 +76,7 @@ select.mini{background:transparent;border:1px solid var(--line);color:var(--dim)
 h2{font-size:13px;color:var(--dim);margin:0 0 12px;font-weight:500}
 pre{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:12px;color:var(--dim);max-height:190px;overflow:auto;margin:0}
 .empty{color:var(--dim);text-align:center;padding:26px 0;font-size:13px}
+.mini-input{background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:5px 8px;font-size:12px}
 .hm-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .hm-head input{max-width:420px;flex:1}
 .hm-scroll{overflow-x:auto;padding-bottom:4px}
@@ -179,6 +185,17 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
   </div>
 
   <div class='card'>
+    <div class='bar'>
+      <h2 style='margin:0' data-i18n='autoTitle'></h2>
+      <span class='sp'></span>
+      <span class='meta' id='autoState'></span>
+      <input type='number' id='autoInterval' min='1' max='3600' step='1' value='30' style='width:78px' class='mini-input'>
+      <button class='ghost' id='autoBtn'></button>
+    </div>
+    <div class='mono' id='autoHint' data-i18n='autoHint' style='margin-top:6px'></div>
+  </div>
+
+  <div class='card'>
     <div class='hm-head'>
       <h2 style='margin:0' data-i18n='heat'></h2>
       <input type='text' id='hmRepo' data-i18n-ph='heatPh'>
@@ -238,6 +255,7 @@ function applyLang(){
     q('#message').value = t('msgDefault'); q('#message').dataset.auto = '1';
   }
   if(window._heat) renderHeatmap(window._heat);
+  renderAuto();
   tick();
 }
 
@@ -373,6 +391,8 @@ async function load(){
   const repos = [...new Set(s.jobs.map(j => j.repo))];
   q('#repos').innerHTML = repos.map(r => '<option value="'+r+'">').join('');
 
+  window._auto = s.auto || {running: false};
+  renderAuto();
   nextAt = s.next ? s.next.at : null;
   tick();
 
@@ -449,6 +469,32 @@ q('#hmRefresh').onclick = loadHeatmap;
 q('#hmRepo').addEventListener('keydown', e => { if(e.key === 'Enter') loadHeatmap(); });
 q('#repo').addEventListener('change', () => { if(!q('#hmRepo').value) q('#hmRepo').value = q('#repo').value.trim(); });
 
+function renderAuto(){
+  const a = window._auto || {};
+  const on = !!a.running;
+  q('#autoState').textContent = on ? fmt('autoRunning', {i: fmtNum(a.interval || 0)}) : t('autoIdle');
+  q('#autoBtn').textContent = on ? t('autoStop') : t('autoStart');
+  q('#autoBtn').dataset.on = on ? '1' : '0';
+  if(on && a.interval) q('#autoInterval').value = a.interval;
+}
+
+q('#autoBtn').onclick = async () => {
+  const on = !!(window._auto && window._auto.running);
+  try{
+    if(on){
+      await api('/api/auto', {action: 'stop'});
+      toast(t('autoIdle'));
+    } else {
+      const repo = q('#repo').value.trim() || q('#hmRepo').value.trim();
+      if(!repo) return toast(t('tNeedRepo'));
+      const interval = Math.max(1, Number(q('#autoInterval').value) || 30);
+      await api('/api/auto', {action: 'start', repo: repo, interval: interval});
+      toast(fmt('autoRunning', {i: fmtNum(interval)}));
+    }
+    load();
+  }catch(e){ toast(fmt('tFail', {m: e.message})); }
+};
+
 buildControls();
 applyTheme();
 applyLang();
@@ -468,6 +514,58 @@ def render_page() -> bytes:
                 .replace("__LANGS__", json.dumps(LANGS, ensure_ascii=False))).encode()
 
 
+AUTO_JSON = "auto.json"
+
+
+def auto_state() -> dict:
+    path = engine.state_dir() / AUTO_JSON
+    if not path.exists():
+        return {"running": False}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {"running": False}
+    pid = data.get("pid")
+    alive = False
+    if pid:
+        try:
+            os.kill(pid, 0)
+            alive = True
+        except OSError:
+            alive = False
+    data["running"] = alive
+    return data
+
+
+def auto_start(repo: str, interval: float) -> dict:
+    if auto_state().get("running"):
+        raise ValueError("already running")
+    repo_path = Path(repo).expanduser().resolve()
+    if not (repo_path / ".git").exists():
+        raise ValueError(f"{repo_path} 不是 git 仓库")
+    if interval < 1:
+        raise ValueError("interval must be >= 1 second")
+    log = (engine.state_dir() / "auto.out").open("a", encoding="utf-8")
+    proc = subprocess.Popen(
+        [sys.executable, "-m", "commit_auto.auto", "--repo", str(repo_path),
+         "--interval", f"{interval:g}", "--push-every", "10"],
+        cwd=str(Path(__file__).resolve().parent.parent), stdout=log, stderr=log, start_new_session=True)
+    payload = {"pid": proc.pid, "repo": str(repo_path), "interval": interval}
+    (engine.state_dir() / AUTO_JSON).write_text(json.dumps(payload), encoding="utf-8")
+    return payload
+
+
+def auto_stop() -> None:
+    state = auto_state()
+    pid = state.get("pid")
+    if pid:
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except OSError:
+            pass
+    (engine.state_dir() / AUTO_JSON).unlink(missing_ok=True)
+
+
 def state_payload() -> dict:
     jobs = sorted(engine.load_jobs(), key=lambda j: j["at"])
     return {
@@ -476,6 +574,7 @@ def state_payload() -> dict:
         "jobs": jobs,
         "next": engine.next_due(jobs),
         "log": engine.tail_log(),
+        "auto": auto_state(),
     }
 
 
@@ -532,6 +631,13 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == "/api/run":
                 due = engine.run_due()
                 return self._send(200, {"count": len(due), "jobs": due})
+            if self.path == "/api/auto":
+                action = body.get("action")
+                if action == "stop":
+                    auto_stop()
+                    return self._send(200, {"ok": True, "auto": auto_state()})
+                payload = auto_start(body.get("repo", ""), float(body.get("interval", 30)))
+                return self._send(200, {"ok": True, "auto": payload})
             if self.path == "/api/agent":
                 agent.uninstall() if body.get("action") == "uninstall" else agent.install()
                 return self._send(200, {"ok": True})

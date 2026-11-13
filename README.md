@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.204
+# Automation Customize Commit · V2.19.205
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -76,7 +76,13 @@ commit 或 push 失败会记 `error` 并累计次数，最多重试 5 次，每�
 python3 -m commit_auto.auto --repo ~/code/proj --interval 300
 ```
 
-常驻进程：每轮生成一个随机 sha256 写进 `hashes.log`，提交信息取前 16 位，然后推送。`--interval` 控制节奏，`--count` 限制轮数（0 = 无限），`--push-every` 控制推送频率。PID 写在 `.state/auto.pid`，`kill $(cat .state/auto.pid)` 即可停止。
+界面里也能直接控制：填仓库路径、设置间隔（最快 1 秒），点「启动/停止」。命令行等价：
+
+```bash
+python3 -m commit_auto.auto --repo ~/code/proj --interval 30 --push-every 10
+```
+
+常驻进程：每轮生成一个随机 sha256 写进 `hashes.log`，提交信息取前 16 位，然后推送。`--interval` 控制节奏，`--count` 限制轮数（0 = 无限），`--push-every` 控制推送频率。PID 写在 `.state/auto.pid`。
 
 ## 历史回填
 
@@ -111,6 +117,7 @@ python3 -m unittest discover -s tests
 
 当前 V2.19.197，版本号在 `VERSION` 文件，界面标题与 CLI `--version` 都从这里读。
 
+- **V2.19.205** GUI 内启动/停止全自动提交，间隔可调（最快 1 秒）
 - **V2.19.204** 回填支持 `--loop` 循环模式，修复 `time` 未导入导致的循环中断
 - **V2.19.203** 日期/时长/数字按语言格式化，热力图月份标尺，断线降级，占位文案随语言切换
 - **V2.19.202** 11 种语言、深浅主题、6 种强调色
