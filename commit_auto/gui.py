@@ -74,6 +74,8 @@ pre{background:var(--card2);border:1px solid var(--line);border-radius:10px;padd
 .hm-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .hm-head input{max-width:420px;flex:1}
 .hm-scroll{overflow-x:auto;padding-bottom:4px}
+.hm-months{display:grid;grid-auto-flow:column;grid-template-rows:13px;gap:3px;margin-bottom:3px;width:max-content}
+.hm-m{font-size:10px;color:var(--dim);white-space:nowrap;overflow:visible}
 .hm-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);gap:3px;width:max-content}
 .hm-cell{width:13px;height:13px;border-radius:3px;background:var(--c0);display:block}
 .hm-cell[data-l='1']{background:var(--c1)}
@@ -126,7 +128,7 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
       </div>
       <div>
         <label data-i18n='msg'></label>
-        <input type='text' id='message' value='chore: scheduled commit'>
+        <input type='text' id='message'>
       </div>
       <div>
         <label data-i18n='repeat'></label>
@@ -182,7 +184,10 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
       <input type='text' id='hmRepo' data-i18n-ph='heatPh'>
       <button class='ghost' id='hmRefresh' data-i18n='refresh'></button>
     </div>
-    <div class='hm-scroll'><div class='hm-grid' id='hmGrid'></div></div>
+    <div class='hm-scroll'>
+      <div class='hm-months' id='hmMonths'></div>
+      <div class='hm-grid' id='hmGrid'></div>
+    </div>
     <div class='hm-stats' id='hmStats'></div>
     <div class='hm-legend'>
       <span data-i18n='less'></span>
@@ -229,6 +234,9 @@ function applyLang(){
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   q('#agentBtn').textContent = agentOn ? t('uninstall') : t('install');
+  if(!q('#message').value || q('#message').dataset.auto === '1'){
+    q('#message').value = t('msgDefault'); q('#message').dataset.auto = '1';
+  }
   if(window._heat) renderHeatmap(window._heat);
   tick();
 }
@@ -267,9 +275,16 @@ function pad(n){ return String(n).padStart(2,'0'); }
 function localValue(d){
   return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
 }
+const nf = (opts) => new Intl.DateTimeFormat(lang, opts);
 function fmtAt(iso){
   const d = new Date(iso);
-  return pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+  return nf({month:'2-digit', day:'2-digit'}).format(d) + ' ' +
+         nf({hour:'2-digit', minute:'2-digit', hour12:false}).format(d);
+}
+function fmtNum(n){ return new Intl.NumberFormat(lang).format(n); }
+function fmtDur(ms){
+  const h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000), s = Math.floor(ms%60000/1000);
+  return (h ? h + t('unitH') + ' ' : '') + pad(m) + t('unitM') + ' ' + pad(s) + t('unitS');
 }
 function activeMode(){ return q('#mode').value; }
 function ymd(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
@@ -280,8 +295,7 @@ function tick(){
   if(!nextAt){ el.textContent = t('nextNone'); return; }
   const ms = new Date(nextAt) - new Date();
   if(ms <= 0){ el.textContent = t('nextOverdue'); return; }
-  const h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000), s = Math.floor(ms%60000/1000);
-  el.textContent = fmt('nextFmt', {t: fmtAt(nextAt), d: (h ? h+'h ' : '') + m + 'm ' + pad(s) + 's'});
+  el.textContent = fmt('nextFmt', {t: fmtAt(nextAt), d: fmtDur(ms)});
 }
 
 document.querySelectorAll('.quick button').forEach(b => {
@@ -320,10 +334,21 @@ function renderHeatmap(counts){
     cells.push('<span class="hm-cell" data-l="'+level(n)+'" title="'+ymd(d)+' · '+n+'"></span>');
   }
   grid.innerHTML = cells.join('');
+
+  const months = [];
+  let prevMonth = -1;
+  for(let d = new Date(start); d <= end; d.setDate(d.getDate()+7)){
+    const m = d.getMonth();
+    months.push(m !== prevMonth ? '<span class="hm-m">'+nf({month:'short'}).format(d)+'</span>'
+                                : '<span class="hm-m"></span>');
+    prevMonth = m;
+  }
+  q('#hmMonths').innerHTML = months.join('');
   for(const d = new Date(end); d >= start; d.setDate(d.getDate()-1)){
     if((counts[ymd(d)] || 0) > 0) cur++; else break;
   }
-  q('#hmStats').textContent = fmt('stats', {d: 371, t: total, a: active, b: best, c: cur});
+  q('#hmStats').textContent = fmt('stats', {d: fmtNum(371), t: fmtNum(total), a: fmtNum(active),
+                                           b: fmtNum(best), c: fmtNum(cur)});
 }
 
 async function loadHeatmap(){
@@ -336,7 +361,9 @@ async function loadHeatmap(){
 }
 
 async function load(){
-  const s = await api('/api/state');
+  let s;
+  try{ s = await api('/api/state'); }
+  catch(e){ q('#agentChip').className = 'chip off'; q('#agentChip').textContent = 'offline'; return; }
   agentOn = s.agent;
   const chip = q('#agentChip');
   chip.className = 'chip ' + (s.agent ? 'on' : 'off');
@@ -387,7 +414,7 @@ q('#add').onclick = async () => {
   const body = {
     repo: q('#repo').value.trim(),
     at: q('#at').value,
-    message: q('#message').value.trim() || 'chore: scheduled commit',
+    message: q('#message').value.trim() || t('msgDefault'),
     file: mode === 'file' ? (q('#file').value.trim() || 'commit-log.txt') : null,
     push: q('#push').checked,
     backdate: q('#backdate').checked,

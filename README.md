@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.202
+# Automation Customize Commit · V2.19.203
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -106,6 +106,8 @@ python3 -m unittest discover -s tests
 
 当前 V2.19.197，版本号在 `VERSION` 文件，界面标题与 CLI `--version` 都从这里读。
 
+- **V2.19.203** 日期/时长/数字按语言格式化，热力图月份标尺，断线降级，占位文案随语言切换
+- **V2.19.202** 11 种语言、深浅主题、6 种强调色
 - **V2.19.197** 重复计划（每天 / 每周）、单条立即执行、下一个任务倒计时
 - **V2.19.196** 基线：调度引擎、launchd 后台代理、本地 Web GUI、CLI、9 项单元测试
 

@@ -16,6 +16,7 @@ LANGS = [
 
 I18N = {
     "en": {
+        "msgDefault": "chore: scheduled commit", "unitH": "h", "unitM": "m", "unitS": "s",
         "newTask": "New scheduled commit", "repo": "Repository", "repoPh": "/Users/you/code/project",
         "at": "Run at", "msg": "Commit message", "repeat": "Repeat", "content": "Content",
         "file": "Target file (append mode)", "push": "Push to origin after run",
@@ -39,6 +40,7 @@ I18N = {
         "accent": "Accent", "lang": "Language", "onlyLocal": "local only", "backdated": "backdated",
     },
     "zh-CN": {
+        "msgDefault": "chore: 定时提交", "unitH": "小时", "unitM": "分", "unitS": "秒",
         "newTask": "新建定时提交", "repo": "仓库路径", "repoPh": "/Users/you/code/project",
         "at": "执行时间", "msg": "提交信息", "repeat": "重复", "content": "提交内容",
         "file": "目标文件（追加模式）", "push": "执行后推送 origin",
@@ -62,6 +64,7 @@ I18N = {
         "accent": "强调色", "lang": "语言", "onlyLocal": "仅本地", "backdated": "回填",
     },
     "zh-TW": {
+        "msgDefault": "chore: 定時提交", "unitH": "小時", "unitM": "分", "unitS": "秒",
         "newTask": "新增定時提交", "repo": "儲存庫路徑", "repoPh": "/Users/you/code/project",
         "at": "執行時間", "msg": "提交訊息", "repeat": "重複", "content": "提交內容",
         "file": "目標檔案（附加模式）", "push": "執行後推送 origin",
@@ -85,6 +88,7 @@ I18N = {
         "accent": "強調色", "lang": "語言", "onlyLocal": "僅本機", "backdated": "回填",
     },
     "ja": {
+        "msgDefault": "chore: 定期コミット", "unitH": "時間", "unitM": "分", "unitS": "秒",
         "newTask": "スケジュール登録", "repo": "リポジトリ", "repoPh": "/Users/you/code/project",
         "at": "実行時刻", "msg": "コミットメッセージ", "repeat": "繰り返し", "content": "コミット内容",
         "file": "対象ファイル（追記モード）", "push": "実行後に origin へ push",
@@ -108,6 +112,7 @@ I18N = {
         "accent": "アクセント", "lang": "言語", "onlyLocal": "ローカルのみ", "backdated": "日時指定",
     },
     "ko": {
+        "msgDefault": "chore: 예약 커밋", "unitH": "시간", "unitM": "분", "unitS": "초",
         "newTask": "예약 커밋 만들기", "repo": "저장소 경로", "repoPh": "/Users/you/code/project",
         "at": "실행 시각", "msg": "커밋 메시지", "repeat": "반복", "content": "커밋 내용",
         "file": "대상 파일(추가 모드)", "push": "실행 후 origin으로 푸시",
@@ -131,6 +136,7 @@ I18N = {
         "accent": "강조색", "lang": "언어", "onlyLocal": "로컬만", "backdated": "시각 지정",
     },
     "es": {
+        "msgDefault": "chore: commit programado", "unitH": "h", "unitM": "min", "unitS": "s",
         "newTask": "Nuevo commit programado", "repo": "Repositorio", "repoPh": "/Users/you/code/project",
         "at": "Ejecutar a las", "msg": "Mensaje", "repeat": "Repetir", "content": "Contenido",
         "file": "Archivo destino (modo añadir)", "push": "Hacer push a origin",
@@ -154,6 +160,7 @@ I18N = {
         "accent": "Acento", "lang": "Idioma", "onlyLocal": "solo local", "backdated": "retroactivo",
     },
     "fr": {
+        "msgDefault": "chore: commit planifié", "unitH": "h", "unitM": "min", "unitS": "s",
         "newTask": "Nouveau commit planifié", "repo": "Dépôt", "repoPh": "/Users/you/code/project",
         "at": "Exécuter à", "msg": "Message", "repeat": "Répéter", "content": "Contenu",
         "file": "Fichier cible (mode ajout)", "push": "Pousser vers origin",
@@ -177,6 +184,7 @@ I18N = {
         "accent": "Accent", "lang": "Langue", "onlyLocal": "local seul", "backdated": "rétroactif",
     },
     "de": {
+        "msgDefault": "chore: geplanter Commit", "unitH": "Std", "unitM": "Min", "unitS": "Sek",
         "newTask": "Neuer geplanter Commit", "repo": "Repository", "repoPh": "/Users/you/code/project",
         "at": "Ausführen um", "msg": "Nachricht", "repeat": "Wiederholen", "content": "Inhalt",
         "file": "Zieldatei (Anhängemodus)", "push": "Nach origin pushen",
@@ -200,6 +208,7 @@ I18N = {
         "accent": "Akzent", "lang": "Sprache", "onlyLocal": "nur lokal", "backdated": "rückdatiert",
     },
     "ru": {
+        "msgDefault": "chore: плановый коммит", "unitH": "ч", "unitM": "мин", "unitS": "с",
         "newTask": "Новый отложенный коммит", "repo": "Репозиторий", "repoPh": "/Users/you/code/project",
         "at": "Время запуска", "msg": "Сообщение", "repeat": "Повтор", "content": "Содержимое",
         "file": "Целевой файл (режим дописывания)", "push": "Отправить в origin",
@@ -223,6 +232,7 @@ I18N = {
         "accent": "Акцент", "lang": "Язык", "onlyLocal": "только локально", "backdated": "задним числом",
     },
     "pt": {
+        "msgDefault": "chore: commit agendado", "unitH": "h", "unitM": "min", "unitS": "s",
         "newTask": "Novo commit agendado", "repo": "Repositório", "repoPh": "/Users/you/code/project",
         "at": "Executar às", "msg": "Mensagem", "repeat": "Repetir", "content": "Conteúdo",
         "file": "Arquivo alvo (modo anexar)", "push": "Enviar para origin",
@@ -246,6 +256,7 @@ I18N = {
         "accent": "Destaque", "lang": "Idioma", "onlyLocal": "só local", "backdated": "retroativo",
     },
     "ar": {
+        "msgDefault": "chore: التزام مجدول", "unitH": "س", "unitM": "د", "unitS": "ث",
         "newTask": "التزام مجدول جديد", "repo": "المستودع", "repoPh": "/Users/you/code/project",
         "at": "وقت التنفيذ", "msg": "رسالة الالتزام", "repeat": "التكرار", "content": "المحتوى",
         "file": "الملف الهدف (وضع الإضافة)", "push": "إرسال إلى origin",
