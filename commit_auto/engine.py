@@ -211,6 +211,19 @@ def set_repeat(job_id: str, repeat: str) -> dict:
     raise KeyError(f"没有任务 {job_id}")
 
 
+def commit_days(repo: str, days: int = 371) -> dict[str, int]:
+    """每个自然日的提交数，用于热力图。"""
+    path = Path(repo).expanduser().resolve()
+    if not (path / ".git").exists():
+        raise ValueError(f"{path} 不是 git 仓库")
+    out = git(path, "log", f"--since={days} days ago", "--format=%ad", "--date=short")
+    counts: dict[str, int] = {}
+    for line in out.splitlines():
+        if line.strip():
+            counts[line.strip()] = counts.get(line.strip(), 0) + 1
+    return counts
+
+
 def next_due(jobs: list[dict]) -> dict | None:
     pending = [j for j in jobs if j["status"] in {"pending", "error"}
                and j["attempts"] < MAX_ATTEMPTS]

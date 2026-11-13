@@ -62,6 +62,18 @@ td.acts{white-space:nowrap;text-align:right}
 h2{font-size:13px;color:var(--dim);margin:0 0 12px;font-weight:500}
 pre{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:12px;color:var(--dim);max-height:190px;overflow:auto;margin:0}
 .empty{color:var(--dim);text-align:center;padding:26px 0;font-size:13px}
+
+.hm-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.hm-head input{max-width:420px;flex:1}
+.hm-scroll{overflow-x:auto;padding-bottom:4px}
+.hm-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);gap:3px;width:max-content}
+.hm-cell{width:13px;height:13px;border-radius:3px;background:#1b2027;display:block}
+.hm-cell[data-l='1']{background:#1f4d34}
+.hm-cell[data-l='2']{background:#2c7a4d}
+.hm-cell[data-l='3']{background:#3ecf8e}
+.hm-cell[data-l='4']{background:#8bf3bd}
+.hm-stats{color:var(--dim);font-size:12px;margin-top:12px}
+.hm-legend{display:flex;gap:5px;align-items:center;color:var(--dim);font-size:12px;margin-top:8px}
 #toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#243044;color:var(--txt);border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;pointer-events:none}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
@@ -135,6 +147,21 @@ pre{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:1
       <thead><tr><th style='width:108px'>时间</th><th style='width:174px'>仓库</th><th>提交信息</th><th style='width:88px'>重复</th><th style='width:74px'>状态</th><th style='width:104px'></th></tr></thead>
       <tbody id='jobs'><tr><td colspan='6' class='empty'>暂无任务</td></tr></tbody>
     </table>
+  </div>
+
+  <div class='card'>
+    <div class='hm-head'>
+      <h2 style='margin:0'>提交热力图</h2>
+      <input type='text' id='hmRepo' placeholder='仓库路径，例如 /Users/you/code/project'>
+      <button class='ghost' id='hmRefresh'>刷新</button>
+    </div>
+    <div class='hm-scroll'><div class='hm-grid' id='hmGrid'></div></div>
+    <div class='hm-stats' id='hmStats'>填入仓库路径后点刷新</div>
+    <div class='hm-legend'>少
+      <span class='hm-cell' data-l='0'></span><span class='hm-cell' data-l='1'></span>
+      <span class='hm-cell' data-l='2'></span><span class='hm-cell' data-l='3'></span>
+      <span class='hm-cell' data-l='4'></span> 多
+    </div>
   </div>
 
   <div class='card'>
@@ -270,7 +297,56 @@ q('#agentBtn').onclick = async ()=>{
   }catch(e){ toast('失败: ' + e.message); }
 };
 
-load();
+function ymd(d){
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function level(n){ return !n ? 0 : n < 3 ? 1 : n < 10 ? 2 : n < 50 ? 3 : 4; }
+
+function renderHeatmap(counts){
+  const grid = q('#hmGrid');
+  const end = new Date(); end.setHours(0,0,0,0);
+  const start = new Date(end); start.setDate(start.getDate() - 370);
+  const padDays = start.getDay();
+  const cells = [];
+  for(let i=0;i<padDays;i++) cells.push('<span class="hm-cell" style="visibility:hidden"></span>');
+
+  let total = 0, active = 0, run = 0, best = 0, cur = 0;
+  for(const d = new Date(start); d <= end; d.setDate(d.getDate()+1)){
+    const n = counts[ymd(d)] || 0;
+    total += n;
+    if(n){ active++; run++; best = Math.max(best, run); }
+    else run = 0;
+    cells.push('<span class="hm-cell" data-l="'+level(n)+'" title="'+ymd(d)+' · '+n+' 次提交"></span>');
+  }
+  grid.innerHTML = cells.join('');
+  for(const d = new Date(end); d >= start; d.setDate(d.getDate()-1)){
+    if((counts[ymd(d)] || 0) > 0) cur++; else break;
+  }
+  q('#hmStats').textContent = '近 371 天共 '+total+' 次提交 · 有提交 '+active+' 天 · 最长连续 '+best+' 天 · 当前连续 '+cur+' 天';
+}
+
+async function loadHeatmap(){
+  const repo = q('#hmRepo').value.trim();
+  if(!repo){ q('#hmStats').textContent = '填入仓库路径后点刷新'; return; }
+  try{
+    const d = await api('/api/heatmap?repo='+encodeURIComponent(repo));
+    renderHeatmap(d.days || {});
+  }catch(e){
+    q('#hmStats').textContent = '读取失败: ' + e.message;
+  }
+}
+
+q('#hmRefresh').onclick = loadHeatmap;
+q('#hmRepo').addEventListener('keydown', e => { if(e.key === 'Enter') loadHeatmap(); });
+
+load().then(()=>{
+  if(!q('#hmRepo').value){
+    const first = q('#jobs select.mini');
+    const repoInput = q('#repo').value.trim();
+    q('#hmRepo').value = repoInput || '';
+  }
+  q('#repo').addEventListener('change', () => { if(!q('#hmRepo').value) q('#hmRepo').value = q('#repo').value.trim(); });
+});
 setInterval(load, 3000);
 setInterval(tick, 1000);
 </script>
@@ -310,6 +386,13 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, PAGE.replace("__VERSION__", engine.VERSION).encode())
         if self.path == "/api/state":
             return self._send(200, state_payload())
+        if self.path.startswith("/api/heatmap"):
+            from urllib.parse import parse_qs, urlparse
+            repo = (parse_qs(urlparse(self.path).query).get("repo") or [""])[0]
+            try:
+                return self._send(200, {"repo": repo, "days": engine.commit_days(repo)})
+            except Exception as exc:  # noqa: BLE001 - shown in the UI
+                return self._send(400, {"error": str(exc)})
         self._send(404, {"error": "not found"})
 
     def do_POST(self) -> None:

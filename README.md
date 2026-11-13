@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.200
+# Automation Customize Commit · V2.19.201
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -55,6 +55,10 @@ Git 内部是 Unix 时间戳，普通 git 命令不接受负值，所以 **1969 
 ## 失败重试
 
 commit 或 push 失败会记 `error` 并累计次数，最多重试 5 次，每次轮询都会再试。日志见界面底部，文件在 `.state/run.log`。
+
+## 提交热力图
+
+界面里填一个仓库路径点「刷新」，会读取该仓库最近 371 天的 `git log`，画成 GitHub 风格的日历热力图，并给出总提交数、活跃天数、最长连续和当前连续天数。
 
 ## 全自动提交（sha256）
 
