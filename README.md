@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.203
+# Automation Customize Commit · V2.19.204
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -78,6 +78,7 @@ python3 -m commit_auto.auto --repo ~/code/proj --interval 300
 
 ```bash
 python3 -m commit_auto.backfill --repo ~/code/proj --start 1970-01-01 --step 1
+python3 -m commit_auto.backfill --repo ~/code/proj --loop --pause 300   # 跑完一轮从 1970 重新开始
 ```
 
 用 `git fast-import` 一次性写出从起始日期到今天的每日提交（2 万条约 0.5 秒），不产生文件改动，工作区保持干净。仅用于时间戳研究：GitHub 贡献图只统计最近 12 个月，回填 1970 年不会多出绿色格子。
@@ -106,6 +107,7 @@ python3 -m unittest discover -s tests
 
 当前 V2.19.197，版本号在 `VERSION` 文件，界面标题与 CLI `--version` 都从这里读。
 
+- **V2.19.204** 回填支持 `--loop` 循环模式，修复 `time` 未导入导致的循环中断
 - **V2.19.203** 日期/时长/数字按语言格式化，热力图月份标尺，断线降级，占位文案随语言切换
 - **V2.19.202** 11 种语言、深浅主题、6 种强调色
 - **V2.19.197** 重复计划（每天 / 每周）、单条立即执行、下一个任务倒计时
