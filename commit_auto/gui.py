@@ -160,6 +160,7 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
     <div class='row'>
       <label class='check'><input type='checkbox' id='push' checked><span data-i18n='push'></span></label>
       <label class='check'><input type='checkbox' id='backdate'><span data-i18n='backdate'></span></label>
+      <button class='ghost' id='cancelEdit' style='display:none' data-i18n='cancelEdit'></button>
       <button class='primary' id='add' data-i18n='add'></button>
     </div>
   </div>
@@ -227,7 +228,7 @@ const I18N = __I18N__;
 const LANGS = __LANGS__;
 const ACCENTS = ['#4f8cff','#3ecf8e','#ff8a3d','#c084fc','#f472b6','#22d3ee'];
 const q = s => document.querySelector(s);
-let agentOn = false, nextAt = null;
+let agentOn = false, nextAt = null, editingId = null, jobsCache = [];
 let lang = localStorage.getItem('lang') || (navigator.language || 'en').slice(0,2);
 
 function resolveLang(){
@@ -378,6 +379,35 @@ async function loadHeatmap(){
   }catch(e){ q('#hmStats').textContent = fmt('tFail', {m: e.message}); }
 }
 
+function isoLocal(iso){
+  const d = new Date(iso);
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+
+function startEdit(id){
+  const job = jobsCache.find(j => j.id === id);
+  if(!job) return;
+  editingId = id;
+  q('#repo').value = job.repo;
+  q('#at').value = isoLocal(job.at);
+  q('#message').value = job.message;
+  q('#mode').value = job.file ? 'file' : 'empty';
+  q('#file').value = job.file || 'commit-log.txt';
+  q('#file').disabled = q('#mode').value !== 'file';
+  q('#push').checked = !!job.push;
+  q('#backdate').checked = !!job.backdate;
+  q('#repeat').value = job.repeat || 'none';
+  q('#add').textContent = t('saveEdit');
+  q('#cancelEdit').style.display = '';
+  q('#repo').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function stopEdit(){
+  editingId = null;
+  q('#add').textContent = t('add');
+  q('#cancelEdit').style.display = 'none';
+}
+
 async function load(){
   let s;
   try{ s = await api('/api/state'); }
@@ -388,6 +418,7 @@ async function load(){
   chip.textContent = s.agent ? t('agentOn') : t('agentOff');
   q('#agentBtn').textContent = s.agent ? t('uninstall') : t('install');
 
+  jobsCache = s.jobs;
   const repos = [...new Set(s.jobs.map(j => j.repo))];
   q('#repos').innerHTML = repos.map(r => '<option value="'+r+'">').join('');
 
@@ -412,11 +443,13 @@ async function load(){
         '<td><select class="mini" data-id="'+j.id+'">'+opts+'</select></td>'+
         '<td><span class="st '+j.status+'">'+t('st'+j.status.charAt(0).toUpperCase()+j.status.slice(1))+'</span></td>'+
         '<td class="acts"><button class="act" data-run="'+j.id+'">'+t('actRun')+'</button>'+
+        '<button class="act" data-edit="'+j.id+'">'+t('actEdit')+'</button>'+
         '<button class="del" data-del="'+j.id+'">'+t('actDel')+'</button></td></tr>';
     }).join('');
     tb.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
       await api('/api/jobs/delete', {id: b.dataset.del}); toast(t('tDeleted')); load();
     });
+    tb.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => startEdit(b.dataset.edit));
     tb.querySelectorAll('[data-run]').forEach(b => b.onclick = async () => {
       try { await api('/api/jobs/run', {id: b.dataset.run}); toast(t('tRan', {n: 1})); load(); }
       catch(e){ toast(fmt('tFail', {m: e.message})); }
@@ -443,12 +476,19 @@ q('#add').onclick = async () => {
   if(!body.repo) return toast(t('tNeedRepo'));
   if(!body.at) return toast(t('tNeedTime'));
   try{
-    await api('/api/jobs', body);
-    toast(t('tAdded') + ' ' + fmtAt(body.at));
+    if(editingId){
+      await api('/api/jobs/update', Object.assign({id: editingId}, body));
+      stopEdit();
+      toast(t('tSaved'));
+    } else {
+      await api('/api/jobs', body);
+      toast(t('tAdded') + ' ' + fmtAt(body.at));
+    }
     load();
   }catch(e){ toast(fmt('tFail', {m: e.message})); }
 };
 
+q('#cancelEdit').onclick = () => { stopEdit(); };
 q('#runNow').onclick = async () => {
   try{
     const r = await api('/api/run', {});
@@ -621,6 +661,12 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True})
             if self.path == "/api/jobs/run":
                 job = engine.run_job(body.get("id", ""))
+                return self._send(200, {"ok": True, "job": job})
+            if self.path == "/api/jobs/update":
+                job = engine.update_job(body.get("id", ""), at=body.get("at"),
+                                        message=body.get("message"), file=body.get("file"),
+                                        push=body.get("push"), backdate=body.get("backdate"),
+                                        repeat=body.get("repeat"))
                 return self._send(200, {"ok": True, "job": job})
             if self.path == "/api/jobs/repeat":
                 job = engine.set_repeat(body.get("id", ""), body.get("repeat", "none"))

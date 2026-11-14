@@ -98,6 +98,27 @@ def add_job(repo: str, at: str, message: str = "chore: scheduled commit", *,
     return job
 
 
+def update_job(job_id: str, **fields) -> dict:
+    jobs = load_jobs()
+    for job in jobs:
+        if job["id"] != job_id:
+            continue
+        if fields.get("at"):
+            job.update(at=parse_at(fields["at"]).isoformat(timespec="minutes"),
+                       status="pending", attempts=0, last_error=None)
+        for key in ("message", "file", "branch"):
+            if key in fields:
+                job[key] = fields[key] or None
+        for key in ("push", "backdate"):
+            if key in fields:
+                job[key] = bool(fields[key])
+        if fields.get("repeat") in {"none", *REPEAT_DELTAS}:
+            job["repeat"] = fields["repeat"]
+        save_jobs(jobs)
+        return job
+    raise KeyError(f"没有任务 {job_id}")
+
+
 def delete_job(job_id: str) -> bool:
     jobs = load_jobs()
     keep = [j for j in jobs if j["id"] != job_id]

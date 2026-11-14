@@ -16,6 +16,8 @@ LANGS = [
 
 I18N = {
     "en": {
+        "tSaved": "Saved",
+        "actEdit": "Edit", "saveEdit": "Save", "cancelEdit": "Cancel",
         "autoTitle": "Auto commits", "autoInterval": "Interval (s)", "autoStart": "Start", "autoStop": "Stop",
         "autoRunning": "Running · {i}s each", "autoIdle": "Idle", "autoHint": "Min 1s",
         "msgDefault": "chore: scheduled commit", "unitH": "h", "unitM": "m", "unitS": "s",
@@ -42,6 +44,8 @@ I18N = {
         "accent": "Accent", "lang": "Language", "onlyLocal": "local only", "backdated": "backdated",
     },
     "zh-CN": {
+        "tSaved": "已保存",
+        "actEdit": "编辑", "saveEdit": "保存", "cancelEdit": "取消",
         "autoTitle": "全自动提交", "autoInterval": "间隔（秒）", "autoStart": "启动", "autoStop": "停止",
         "autoRunning": "运行中 · {i}s 一个", "autoIdle": "未运行", "autoHint": "最快 1 秒",
         "msgDefault": "chore: 定时提交", "unitH": "小时", "unitM": "分", "unitS": "秒",
@@ -68,6 +72,8 @@ I18N = {
         "accent": "强调色", "lang": "语言", "onlyLocal": "仅本地", "backdated": "回填",
     },
     "zh-TW": {
+        "tSaved": "已儲存",
+        "actEdit": "編輯", "saveEdit": "儲存", "cancelEdit": "取消",
         "autoTitle": "全自動提交", "autoInterval": "間隔（秒）", "autoStart": "啟動", "autoStop": "停止",
         "autoRunning": "執行中 · {i}s 一個", "autoIdle": "未執行", "autoHint": "最快 1 秒",
         "msgDefault": "chore: 定時提交", "unitH": "小時", "unitM": "分", "unitS": "秒",
@@ -94,6 +100,8 @@ I18N = {
         "accent": "強調色", "lang": "語言", "onlyLocal": "僅本機", "backdated": "回填",
     },
     "ja": {
+        "tSaved": "保存しました",
+        "actEdit": "編集", "saveEdit": "保存", "cancelEdit": "キャンセル",
         "autoTitle": "自動コミット", "autoInterval": "間隔（秒）", "autoStart": "開始", "autoStop": "停止",
         "autoRunning": "実行中 · {i} 秒ごと", "autoIdle": "停止中", "autoHint": "最短 1 秒",
         "msgDefault": "chore: 定期コミット", "unitH": "時間", "unitM": "分", "unitS": "秒",
@@ -120,6 +128,8 @@ I18N = {
         "accent": "アクセント", "lang": "言語", "onlyLocal": "ローカルのみ", "backdated": "日時指定",
     },
     "ko": {
+        "tSaved": "저장됨",
+        "actEdit": "편집", "saveEdit": "저장", "cancelEdit": "취소",
         "autoTitle": "자동 커밋", "autoInterval": "간격(초)", "autoStart": "시작", "autoStop": "중지",
         "autoRunning": "실행 중 · {i}초마다", "autoIdle": "중지됨", "autoHint": "최소 1초",
         "msgDefault": "chore: 예약 커밋", "unitH": "시간", "unitM": "분", "unitS": "초",
@@ -146,6 +156,8 @@ I18N = {
         "accent": "강조색", "lang": "언어", "onlyLocal": "로컬만", "backdated": "시각 지정",
     },
     "es": {
+        "tSaved": "Guardado",
+        "actEdit": "Editar", "saveEdit": "Guardar", "cancelEdit": "Cancelar",
         "autoTitle": "Commits automáticos", "autoInterval": "Intervalo (s)", "autoStart": "Iniciar", "autoStop": "Detener",
         "autoRunning": "Activo · cada {i}s", "autoIdle": "Detenido", "autoHint": "Mínimo 1s",
         "msgDefault": "chore: commit programado", "unitH": "h", "unitM": "min", "unitS": "s",
@@ -172,6 +184,8 @@ I18N = {
         "accent": "Acento", "lang": "Idioma", "onlyLocal": "solo local", "backdated": "retroactivo",
     },
     "fr": {
+        "tSaved": "Enregistré",
+        "actEdit": "Modifier", "saveEdit": "Enregistrer", "cancelEdit": "Annuler",
         "autoTitle": "Commits auto", "autoInterval": "Intervalle (s)", "autoStart": "Démarrer", "autoStop": "Arrêter",
         "autoRunning": "Actif · toutes les {i}s", "autoIdle": "Arrêté", "autoHint": "Min 1s",
         "msgDefault": "chore: commit planifié", "unitH": "h", "unitM": "min", "unitS": "s",
@@ -198,6 +212,8 @@ I18N = {
         "accent": "Accent", "lang": "Langue", "onlyLocal": "local seul", "backdated": "rétroactif",
     },
     "de": {
+        "tSaved": "Gespeichert",
+        "actEdit": "Bearbeiten", "saveEdit": "Speichern", "cancelEdit": "Abbrechen",
         "autoTitle": "Auto-Commits", "autoInterval": "Intervall (s)", "autoStart": "Starten", "autoStop": "Stoppen",
         "autoRunning": "Läuft · alle {i}s", "autoIdle": "Gestoppt", "autoHint": "Min. 1s",
         "msgDefault": "chore: geplanter Commit", "unitH": "Std", "unitM": "Min", "unitS": "Sek",
@@ -224,6 +240,8 @@ I18N = {
         "accent": "Akzent", "lang": "Sprache", "onlyLocal": "nur lokal", "backdated": "rückdatiert",
     },
     "ru": {
+        "tSaved": "Сохранено",
+        "actEdit": "Изменить", "saveEdit": "Сохранить", "cancelEdit": "Отмена",
         "autoTitle": "Авто-коммиты", "autoInterval": "Интервал (с)", "autoStart": "Старт", "autoStop": "Стоп",
         "autoRunning": "Работает · каждые {i}с", "autoIdle": "Остановлено", "autoHint": "Мин. 1с",
         "msgDefault": "chore: плановый коммит", "unitH": "ч", "unitM": "мин", "unitS": "с",
@@ -250,6 +268,8 @@ I18N = {
         "accent": "Акцент", "lang": "Язык", "onlyLocal": "только локально", "backdated": "задним числом",
     },
     "pt": {
+        "tSaved": "Salvo",
+        "actEdit": "Editar", "saveEdit": "Salvar", "cancelEdit": "Cancelar",
         "autoTitle": "Commits automáticos", "autoInterval": "Intervalo (s)", "autoStart": "Iniciar", "autoStop": "Parar",
         "autoRunning": "Ativo · a cada {i}s", "autoIdle": "Parado", "autoHint": "Mínimo 1s",
         "msgDefault": "chore: commit agendado", "unitH": "h", "unitM": "min", "unitS": "s",
@@ -276,6 +296,8 @@ I18N = {
         "accent": "Destaque", "lang": "Idioma", "onlyLocal": "só local", "backdated": "retroativo",
     },
     "ar": {
+        "tSaved": "تم الحفظ",
+        "actEdit": "تعديل", "saveEdit": "حفظ", "cancelEdit": "إلغاء",
         "autoTitle": "التزامات تلقائية", "autoInterval": "الفاصل (ث)", "autoStart": "بدء", "autoStop": "إيقاف",
         "autoRunning": "يعمل · كل {i}ث", "autoIdle": "متوقف", "autoHint": "الحد الأدنى 1ث",
         "msgDefault": "chore: التزام مجدول", "unitH": "س", "unitM": "د", "unitS": "ث",

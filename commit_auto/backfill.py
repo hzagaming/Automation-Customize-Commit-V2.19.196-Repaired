@@ -74,26 +74,45 @@ def main() -> None:
     round_no = 0
     while True:
         round_no += 1
-        base = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True,
-                              text=True).stdout.strip()
-        proc = subprocess.Popen(["git", "fast-import", "--quiet"], cwd=repo, stdin=subprocess.PIPE)
-        for chunk in stream(base, name, email, start, end, args.step, args.message):
-            proc.stdin.write(chunk)
-        proc.stdin.close()
-        if proc.wait():
-            sys.exit("fast-import 失败")
+        ok = False
+        for attempt in range(5):
+            base = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True,
+                                  text=True).stdout.strip()
+            proc = subprocess.Popen(["git", "fast-import", "--quiet"], cwd=repo, stdin=subprocess.PIPE)
+            try:
+                for chunk in stream(base, name, email, start, end, args.step, args.message):
+                    proc.stdin.write(chunk)
+                proc.stdin.close()
+                ok = proc.wait() == 0
+            except BrokenPipeError:
+                ok = False
+            if ok:
+                break
+            print(f"导入被并发提交打断 ({attempt + 1}/5)，1 秒后重试", flush=True)
+            time.sleep(1)
+        if not ok:
+            print("连续 5 次导入失败，本轮跳过", flush=True)
+            if not args.loop:
+                sys.exit(1)
+            time.sleep(args.pause)
+            continue
+
+        pushed = False
         for attempt in range(5):
             push = subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=repo, capture_output=True, text=True)
             if push.returncode == 0:
+                pushed = True
                 break
             print(f"push 失败 ({attempt + 1}/5): {push.stderr.strip()[:120]}", flush=True)
             time.sleep(5 * (attempt + 1))
+
         total = len(range(0, (end - start).days + 1, args.step))
         count = subprocess.run(["git", "rev-list", "--count", "HEAD"], cwd=repo, capture_output=True,
                                text=True).stdout.strip()
         head = subprocess.run(["git", "log", "-1", "--format=%h %ai"], cwd=repo,
                               capture_output=True, text=True).stdout.strip()
-        print(f"{datetime.now():%H:%M:%S} 第 {round_no} 轮完成：本轮 {total} 个提交，仓库共 {count} 个，HEAD={head}", flush=True)
+        state = "" if pushed else "（推送未成功）"
+        print(f"{datetime.now():%H:%M:%S} 第 {round_no} 轮完成{state}：本轮 {total} 个提交，仓库共 {count} 个，HEAD={head}", flush=True)
         if not args.loop:
             return
         time.sleep(args.pause)
