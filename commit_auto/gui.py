@@ -190,6 +190,7 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
       <h2 style='margin:0' data-i18n='autoTitle'></h2>
       <span class='sp'></span>
       <span class='meta' id='autoState'></span>
+      <label class='check' style='margin:0'><input type='checkbox' id='autoPre2000'><span data-i18n='autoPre2000'></span></label>
       <input type='number' id='autoInterval' min='1' max='3600' step='1' value='30' style='width:78px' class='mini-input'>
       <button class='ghost' id='autoBtn'></button>
     </div>
@@ -528,7 +529,8 @@ q('#autoBtn').onclick = async () => {
       const repo = q('#repo').value.trim() || q('#hmRepo').value.trim();
       if(!repo) return toast(t('tNeedRepo'));
       const interval = Math.max(1, Number(q('#autoInterval').value) || 30);
-      await api('/api/auto', {action: 'start', repo: repo, interval: interval});
+      await api('/api/auto', {action: 'start', repo: repo, interval: interval,
+                              pre2000: q('#autoPre2000').checked});
       toast(fmt('autoRunning', {i: fmtNum(interval)}));
     }
     load();
@@ -577,7 +579,7 @@ def auto_state() -> dict:
     return data
 
 
-def auto_start(repo: str, interval: float) -> dict:
+def auto_start(repo: str, interval: float, pre2000: bool = False) -> dict:
     if auto_state().get("running"):
         raise ValueError("already running")
     repo_path = Path(repo).expanduser().resolve()
@@ -586,11 +588,14 @@ def auto_start(repo: str, interval: float) -> dict:
     if interval < 1:
         raise ValueError("interval must be >= 1 second")
     log = (engine.state_dir() / "auto.out").open("a", encoding="utf-8")
+    cmd = [sys.executable, "-m", "commit_auto.auto", "--repo", str(repo_path),
+           "--interval", f"{interval:g}", "--push-every", "10"]
+    if pre2000:
+        cmd += ["--date-from", "1970-01-01", "--date-to", "2000-01-01"]
     proc = subprocess.Popen(
-        [sys.executable, "-m", "commit_auto.auto", "--repo", str(repo_path),
-         "--interval", f"{interval:g}", "--push-every", "10"],
+        cmd,
         cwd=str(Path(__file__).resolve().parent.parent), stdout=log, stderr=log, start_new_session=True)
-    payload = {"pid": proc.pid, "repo": str(repo_path), "interval": interval}
+    payload = {"pid": proc.pid, "repo": str(repo_path), "interval": interval, "pre2000": pre2000}
     (engine.state_dir() / AUTO_JSON).write_text(json.dumps(payload), encoding="utf-8")
     return payload
 
@@ -682,7 +687,8 @@ class Handler(BaseHTTPRequestHandler):
                 if action == "stop":
                     auto_stop()
                     return self._send(200, {"ok": True, "auto": auto_state()})
-                payload = auto_start(body.get("repo", ""), float(body.get("interval", 30)))
+                payload = auto_start(body.get("repo", ""), float(body.get("interval", 30)),
+                                     bool(body.get("pre2000")))
                 return self._send(200, {"ok": True, "auto": payload})
             if self.path == "/api/agent":
                 agent.uninstall() if body.get("action") == "uninstall" else agent.install()

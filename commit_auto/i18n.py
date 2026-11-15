@@ -16,6 +16,7 @@ LANGS = [
 
 I18N = {
     "en": {
+        "autoPre2000": "Random date before 2000",
         "tSaved": "Saved",
         "actEdit": "Edit", "saveEdit": "Save", "cancelEdit": "Cancel",
         "autoTitle": "Auto commits", "autoInterval": "Interval (s)", "autoStart": "Start", "autoStop": "Stop",
@@ -44,6 +45,7 @@ I18N = {
         "accent": "Accent", "lang": "Language", "onlyLocal": "local only", "backdated": "backdated",
     },
     "zh-CN": {
+        "autoPre2000": "随机 2000 年前时间",
         "tSaved": "已保存",
         "actEdit": "编辑", "saveEdit": "保存", "cancelEdit": "取消",
         "autoTitle": "全自动提交", "autoInterval": "间隔（秒）", "autoStart": "启动", "autoStop": "停止",
@@ -72,6 +74,7 @@ I18N = {
         "accent": "强调色", "lang": "语言", "onlyLocal": "仅本地", "backdated": "回填",
     },
     "zh-TW": {
+        "autoPre2000": "隨機 2000 年前時間",
         "tSaved": "已儲存",
         "actEdit": "編輯", "saveEdit": "儲存", "cancelEdit": "取消",
         "autoTitle": "全自動提交", "autoInterval": "間隔（秒）", "autoStart": "啟動", "autoStop": "停止",
@@ -100,6 +103,7 @@ I18N = {
         "accent": "強調色", "lang": "語言", "onlyLocal": "僅本機", "backdated": "回填",
     },
     "ja": {
+        "autoPre2000": "2000 年より前の日時",
         "tSaved": "保存しました",
         "actEdit": "編集", "saveEdit": "保存", "cancelEdit": "キャンセル",
         "autoTitle": "自動コミット", "autoInterval": "間隔（秒）", "autoStart": "開始", "autoStop": "停止",
@@ -128,6 +132,7 @@ I18N = {
         "accent": "アクセント", "lang": "言語", "onlyLocal": "ローカルのみ", "backdated": "日時指定",
     },
     "ko": {
+        "autoPre2000": "2000년 이전 무작위 날짜",
         "tSaved": "저장됨",
         "actEdit": "편집", "saveEdit": "저장", "cancelEdit": "취소",
         "autoTitle": "자동 커밋", "autoInterval": "간격(초)", "autoStart": "시작", "autoStop": "중지",
@@ -156,6 +161,7 @@ I18N = {
         "accent": "강조색", "lang": "언어", "onlyLocal": "로컬만", "backdated": "시각 지정",
     },
     "es": {
+        "autoPre2000": "Fecha aleatoria antes de 2000",
         "tSaved": "Guardado",
         "actEdit": "Editar", "saveEdit": "Guardar", "cancelEdit": "Cancelar",
         "autoTitle": "Commits automáticos", "autoInterval": "Intervalo (s)", "autoStart": "Iniciar", "autoStop": "Detener",
@@ -184,6 +190,7 @@ I18N = {
         "accent": "Acento", "lang": "Idioma", "onlyLocal": "solo local", "backdated": "retroactivo",
     },
     "fr": {
+        "autoPre2000": "Date aléatoire avant 2000",
         "tSaved": "Enregistré",
         "actEdit": "Modifier", "saveEdit": "Enregistrer", "cancelEdit": "Annuler",
         "autoTitle": "Commits auto", "autoInterval": "Intervalle (s)", "autoStart": "Démarrer", "autoStop": "Arrêter",
@@ -212,6 +219,7 @@ I18N = {
         "accent": "Accent", "lang": "Langue", "onlyLocal": "local seul", "backdated": "rétroactif",
     },
     "de": {
+        "autoPre2000": "Zufälliges Datum vor 2000",
         "tSaved": "Gespeichert",
         "actEdit": "Bearbeiten", "saveEdit": "Speichern", "cancelEdit": "Abbrechen",
         "autoTitle": "Auto-Commits", "autoInterval": "Intervall (s)", "autoStart": "Starten", "autoStop": "Stoppen",
@@ -240,6 +248,7 @@ I18N = {
         "accent": "Akzent", "lang": "Sprache", "onlyLocal": "nur lokal", "backdated": "rückdatiert",
     },
     "ru": {
+        "autoPre2000": "Случайная дата до 2000",
         "tSaved": "Сохранено",
         "actEdit": "Изменить", "saveEdit": "Сохранить", "cancelEdit": "Отмена",
         "autoTitle": "Авто-коммиты", "autoInterval": "Интервал (с)", "autoStart": "Старт", "autoStop": "Стоп",
@@ -268,6 +277,7 @@ I18N = {
         "accent": "Акцент", "lang": "Язык", "onlyLocal": "только локально", "backdated": "задним числом",
     },
     "pt": {
+        "autoPre2000": "Data aleatória antes de 2000",
         "tSaved": "Salvo",
         "actEdit": "Editar", "saveEdit": "Salvar", "cancelEdit": "Cancelar",
         "autoTitle": "Commits automáticos", "autoInterval": "Intervalo (s)", "autoStart": "Iniciar", "autoStop": "Parar",
@@ -296,6 +306,7 @@ I18N = {
         "accent": "Destaque", "lang": "Idioma", "onlyLocal": "só local", "backdated": "retroativo",
     },
     "ar": {
+        "autoPre2000": "تاريخ عشوائي قبل 2000",
         "tSaved": "تم الحفظ",
         "actEdit": "تعديل", "saveEdit": "حفظ", "cancelEdit": "إلغاء",
         "autoTitle": "التزامات تلقائية", "autoInterval": "الفاصل (ث)", "autoStart": "بدء", "autoStop": "إيقاف",
