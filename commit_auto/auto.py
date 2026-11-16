@@ -50,8 +50,7 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
             if dates:
                 ts = random.randint(dates[0], dates[1] - 1)
                 stamp = datetime.fromtimestamp(ts, timezone.utc).isoformat(timespec="seconds")
-                raw = f"{ts} +0000"
-                env = {"GIT_AUTHOR_DATE": raw, "GIT_COMMITTER_DATE": raw}
+                env = {"GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp}
             else:
                 stamp = datetime.now().isoformat(timespec="seconds")
             with log_path.open("a", encoding="utf-8") as fh:
