@@ -589,7 +589,7 @@ def auto_start(repo: str, interval: float, pre2000: bool = False) -> dict:
         raise ValueError("interval must be >= 1 second")
     log = (engine.state_dir() / "auto.out").open("a", encoding="utf-8")
     cmd = [sys.executable, "-m", "commit_auto.auto", "--repo", str(repo_path),
-           "--interval", f"{interval:g}", "--push-every", "10"]
+           "--interval", f"{interval:g}", "--push-every", "1"]
     if pre2000:
         cmd += ["--date-from", "1970-01-01", "--date-to", "2000-01-01"]
     proc = subprocess.Popen(
