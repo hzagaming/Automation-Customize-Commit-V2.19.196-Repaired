@@ -21,15 +21,16 @@ from . import engine
 PID_FILE = engine.state_dir() / "auto.pid"
 
 
-def push(repo: Path) -> None:
+def push(repo: Path) -> bool:
     for attempt in range(3):
         try:
             engine.git(repo, "push", "origin", "HEAD:main")
-            return
+            return True
         except RuntimeError as exc:
             print(f"push 失败 ({attempt + 1}/3): {exc}", flush=True)
-            time.sleep(5 * (attempt + 1))
-    print("push 连续失败，本轮跳过", flush=True)
+            time.sleep(3 * (attempt + 1))
+    print("push 连续失败，跳过这次推送，继续下一轮", flush=True)
+    return False
 
 
 def stamp_range(start: date, end: date) -> tuple[int, int]:
@@ -43,6 +44,7 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
     PID_FILE.write_text(str(os.getpid()), encoding="utf-8")
     log_path = repo / log_file
     done = 0
+    failures = 0
     try:
         while count <= 0 or done < count:
             digest = hashlib.sha256(os.urandom(32)).hexdigest()
@@ -53,10 +55,16 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
                 env = {"GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp}
             else:
                 stamp = datetime.now().isoformat(timespec="seconds")
-            with log_path.open("a", encoding="utf-8") as fh:
-                fh.write(f"{digest} {stamp}\n")
-            engine.git(repo, "add", "--", log_file)
-            engine.git(repo, "commit", "-q", "-m", f"chore: {digest[:16]}", env=env)
+            try:
+                with log_path.open("a", encoding="utf-8") as fh:
+                    fh.write(f"{digest} {stamp}\n")
+                engine.git(repo, "add", "--", log_file)
+                engine.git(repo, "commit", "-q", "-m", f"chore: {digest[:16]}", env=env)
+            except (RuntimeError, OSError) as exc:
+                failures += 1
+                print(f"{stamp} 提交失败（累计 {failures} 次）: {exc}", flush=True)
+                time.sleep(interval)
+                continue
             done += 1
             print(f"{stamp} #{done} {digest[:16]}", flush=True)
             if push_every and done % push_every == 0:
@@ -67,7 +75,7 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
         print("\n已停止", flush=True)
     finally:
         PID_FILE.unlink(missing_ok=True)
-        print(f"共提交 {done} 次", flush=True)
+        print(f"共提交 {done} 次，失败跳过 {failures} 次", flush=True)
 
 
 def main() -> None:

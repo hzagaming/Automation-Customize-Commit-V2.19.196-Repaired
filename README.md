@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.208
+# Automation Customize Commit · V2.19.209
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -125,6 +125,7 @@ python3 -m unittest discover -s tests
 
 当前 V2.19.197，版本号在 `VERSION` 文件，界面标题与 CLI `--version` 都从这里读。
 
+- **V2.19.209** 自动提交单轮失败不再退出（跳过并继续），GUI 每轮都推送
 - **V2.19.208** 修复早期时间戳被判 invalid date 的问题（改用 ISO 格式）
 - **V2.19.207** 自动提交支持 1970–2000 随机时间戳，GUI 加勾选框
 - **V2.19.206** 任务编辑、回填循环并发重试（不再被自动提交打断）
