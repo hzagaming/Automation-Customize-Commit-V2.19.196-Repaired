@@ -16,6 +16,7 @@ LANGS = [
 
 I18N = {
     "en": {
+        "autoHeat": "Auto commit heatmap (real time)",
         "themeSystem": "System",
         "notifyOn": "Notify: on", "notifyOff": "Notify: off",
         "exportJobs": "Export", "importJobs": "Import", "tImported": "Imported {n}",
@@ -49,6 +50,7 @@ I18N = {
         "accent": "Accent", "lang": "Language", "onlyLocal": "local only", "backdated": "backdated",
     },
     "zh-CN": {
+        "autoHeat": "自动提交热力图（真实时间）",
         "themeSystem": "跟随系统",
         "notifyOn": "通知：开", "notifyOff": "通知：关",
         "exportJobs": "导出", "importJobs": "导入", "tImported": "已导入 {n} 条",
@@ -82,6 +84,7 @@ I18N = {
         "accent": "强调色", "lang": "语言", "onlyLocal": "仅本地", "backdated": "回填",
     },
     "zh-TW": {
+        "autoHeat": "自動提交熱力圖（真實時間）",
         "themeSystem": "跟隨系統",
         "notifyOn": "通知：開", "notifyOff": "通知：關",
         "exportJobs": "匯出", "importJobs": "匯入", "tImported": "已匯入 {n} 條",
@@ -115,6 +118,7 @@ I18N = {
         "accent": "強調色", "lang": "語言", "onlyLocal": "僅本機", "backdated": "回填",
     },
     "ja": {
+        "autoHeat": "自動コミットのヒートマップ（実際の時刻）",
         "themeSystem": "システム",
         "notifyOn": "通知: オン", "notifyOff": "通知: オフ",
         "exportJobs": "エクスポート", "importJobs": "インポート", "tImported": "{n} 件取り込み",
@@ -148,6 +152,7 @@ I18N = {
         "accent": "アクセント", "lang": "言語", "onlyLocal": "ローカルのみ", "backdated": "日時指定",
     },
     "ko": {
+        "autoHeat": "자동 커밋 히트맵(실제 시간)",
         "themeSystem": "시스템",
         "notifyOn": "알림: 켬", "notifyOff": "알림: 끔",
         "exportJobs": "내보내기", "importJobs": "가져오기", "tImported": "{n}개 가져옴",
@@ -181,6 +186,7 @@ I18N = {
         "accent": "강조색", "lang": "언어", "onlyLocal": "로컬만", "backdated": "시각 지정",
     },
     "es": {
+        "autoHeat": "Mapa de commits automáticos (hora real)",
         "themeSystem": "Sistema",
         "notifyOn": "Aviso: sí", "notifyOff": "Aviso: no",
         "exportJobs": "Exportar", "importJobs": "Importar", "tImported": "{n} importadas",
@@ -214,6 +220,7 @@ I18N = {
         "accent": "Acento", "lang": "Idioma", "onlyLocal": "solo local", "backdated": "retroactivo",
     },
     "fr": {
+        "autoHeat": "Carte des commits auto (heure réelle)",
         "themeSystem": "Système",
         "notifyOn": "Notif : oui", "notifyOff": "Notif : non",
         "exportJobs": "Exporter", "importJobs": "Importer", "tImported": "{n} importée(s)",
@@ -247,6 +254,7 @@ I18N = {
         "accent": "Accent", "lang": "Langue", "onlyLocal": "local seul", "backdated": "rétroactif",
     },
     "de": {
+        "autoHeat": "Auto-Commit-Heatmap (Echtzeit)",
         "themeSystem": "System",
         "notifyOn": "Mitteilung: an", "notifyOff": "Mitteilung: aus",
         "exportJobs": "Exportieren", "importJobs": "Importieren", "tImported": "{n} importiert",
@@ -280,6 +288,7 @@ I18N = {
         "accent": "Akzent", "lang": "Sprache", "onlyLocal": "nur lokal", "backdated": "rückdatiert",
     },
     "ru": {
+        "autoHeat": "Карта авто-коммитов (реальное время)",
         "themeSystem": "Система",
         "notifyOn": "Уведомления: вкл", "notifyOff": "Уведомления: выкл",
         "exportJobs": "Экспорт", "importJobs": "Импорт", "tImported": "Импортировано {n}",
@@ -313,6 +322,7 @@ I18N = {
         "accent": "Акцент", "lang": "Язык", "onlyLocal": "только локально", "backdated": "задним числом",
     },
     "pt": {
+        "autoHeat": "Mapa de commits automáticos (hora real)",
         "themeSystem": "Sistema",
         "notifyOn": "Aviso: ligado", "notifyOff": "Aviso: desligado",
         "exportJobs": "Exportar", "importJobs": "Importar", "tImported": "{n} importadas",
@@ -346,6 +356,7 @@ I18N = {
         "accent": "Destaque", "lang": "Idioma", "onlyLocal": "só local", "backdated": "retroativo",
     },
     "ar": {
+        "autoHeat": "خريطة الالتزامات التلقائية (الوقت الفعلي)",
         "themeSystem": "النظام",
         "notifyOn": "الإشعارات: مفعّل", "notifyOff": "الإشعارات: متوقف",
         "exportJobs": "تصدير", "importJobs": "استيراد", "tImported": "تم استيراد {n}",

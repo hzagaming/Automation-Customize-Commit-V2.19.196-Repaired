@@ -61,7 +61,7 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
                 stamp = datetime.now().isoformat(timespec="seconds")
             try:
                 with log_path.open("a", encoding="utf-8") as fh:
-                    fh.write(f"{digest} {stamp}\n")
+                    fh.write(f"{digest} {stamp} {datetime.now().isoformat(timespec='seconds')}\n")
                 engine.git(repo, "add", "--", log_file)
                 engine.git(repo, "commit", "-q", "-m", f"chore: {digest[:16]}", env=env)
             except (RuntimeError, OSError) as exc:

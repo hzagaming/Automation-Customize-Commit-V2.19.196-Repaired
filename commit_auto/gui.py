@@ -227,6 +227,19 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
   </div>
 
   <div class='card'>
+    <div class='hm-head'>
+      <h2 style='margin:0' data-i18n='autoHeat'></h2>
+      <input type='text' id='ahRepo' data-i18n-ph='heatPh'>
+      <button class='ghost' id='ahRefresh' data-i18n='refresh'></button>
+    </div>
+    <div class='hm-scroll'>
+      <div class='hm-months' id='ahMonths'></div>
+      <div class='hm-grid' id='ahGrid'></div>
+    </div>
+    <div class='hm-stats' id='ahStats'></div>
+  </div>
+
+  <div class='card'>
     <h2 data-i18n='log'></h2>
     <pre id='log'></pre>
   </div>
@@ -355,9 +368,11 @@ async function api(path, body){
   return data;
 }
 
-function renderHeatmap(counts){
-  window._heat = counts;
-  const grid = q('#hmGrid');
+function renderHeatmap(counts, target){
+  const grid = q(target ? target.grid : '#hmGrid');
+  const monthsEl = q(target ? target.months : '#hmMonths');
+  const statsEl = q(target ? target.stats : '#hmStats');
+  if(!target) window._heat = counts;
   const end = new Date(); end.setHours(0,0,0,0);
   const start = new Date(end); start.setDate(start.getDate() - 370);
   const padDays = start.getDay();
@@ -381,17 +396,18 @@ function renderHeatmap(counts){
                                 : '<span class="hm-m"></span>');
     prevMonth = m;
   }
-  q('#hmMonths').innerHTML = months.join('');
+  monthsEl.innerHTML = months.join('');
   for(const d = new Date(end); d >= start; d.setDate(d.getDate()-1)){
     if((counts[ymd(d)] || 0) > 0) cur++; else break;
   }
-  q('#hmStats').textContent = fmt('stats', {d: fmtNum(371), t: fmtNum(total), a: fmtNum(active),
-                                           b: fmtNum(best), c: fmtNum(cur)});
+  statsEl.textContent = fmt('stats', {d: fmtNum(371), t: fmtNum(total), a: fmtNum(active),
+                                     b: fmtNum(best), c: fmtNum(cur)});
 }
 
 async function loadHeatmap(){
   const repo = q('#hmRepo').value.trim();
-  if(!repo){ q('#hmStats').textContent = t('heatEmpty'); return; }
+  if(!repo){ q('#hmStats').textContent = t('heatEmpty');
+q('#ahStats').textContent = t('heatEmpty'); return; }
   try{
     const d = await api('/api/heatmap?repo=' + encodeURIComponent(repo));
     renderHeatmap(d.days || {});
@@ -443,6 +459,8 @@ async function load(){
 
   window._auto = s.auto || {running: false};
   window._notify = !!s.notify;
+  if(!q('#ahRepo').value && s.auto && s.auto.repo) q('#ahRepo').value = s.auto.repo;
+  if(!q('#hmRepo').value && s.jobs.length) q('#hmRepo').value = s.jobs[0].repo;
   q('#notifyBtn').textContent = s.notify ? t('notifyOn') : t('notifyOff');
   renderAuto();
   nextAt = s.next ? s.next.at : null;
@@ -548,6 +566,18 @@ q('#agentBtn').onclick = async () => {
   }catch(e){ toast(fmt('tFail', {m: e.message})); }
 };
 
+async function loadAutoHeat(){
+  const repo = q('#ahRepo').value.trim();
+  if(!repo){ q('#ahStats').textContent = t('heatEmpty'); return; }
+  try{
+    const d = await api('/api/autoheat?repo=' + encodeURIComponent(repo));
+    renderHeatmap(d.days || {}, {grid:'#ahGrid', months:'#ahMonths', stats:'#ahStats'});
+  }catch(e){ q('#ahStats').textContent = fmt('tFail', {m: e.message}); }
+}
+
+q('#ahRefresh').onclick = loadAutoHeat;
+q('#ahRepo').addEventListener('keydown', e => { if(e.key === 'Enter') loadAutoHeat(); });
+
 q('#hmRefresh').onclick = loadHeatmap;
 q('#hmRepo').addEventListener('keydown', e => { if(e.key === 'Enter') loadHeatmap(); });
 q('#repo').addEventListener('change', () => { if(!q('#hmRepo').value) q('#hmRepo').value = q('#repo').value.trim(); });
@@ -584,6 +614,7 @@ buildControls();
 applyTheme();
 applyLang();
 q('#hmStats').textContent = t('heatEmpty');
+q('#ahStats').textContent = t('heatEmpty');
 load();
 setInterval(load, 3000);
 setInterval(tick, 1000);
@@ -698,6 +729,12 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path == "/api/state":
             return self._send(200, state_payload())
+        if self.path.startswith("/api/autoheat"):
+            repo = (parse_qs(urlparse(self.path).query).get("repo") or [""])[0]
+            try:
+                return self._send(200, {"repo": repo, "days": engine.auto_days(repo)})
+            except Exception as exc:  # noqa: BLE001
+                return self._send(400, {"error": str(exc)})
         if self.path.startswith("/api/heatmap"):
             repo = (parse_qs(urlparse(self.path).query).get("repo") or [""])[0]
             try:

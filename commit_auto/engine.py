@@ -298,6 +298,24 @@ def commit_days(repo: str, days: int = 371) -> dict[str, int]:
     return counts
 
 
+def auto_days(repo: str, days: int = 371) -> dict[str, int]:
+    """hashes.log 里按真实发生时间统计的每日提交数。"""
+    path = Path(repo).expanduser().resolve() / "hashes.log"
+    if not path.exists():
+        raise ValueError(f"{path} 不存在")
+    counts: dict[str, int] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        parts = line.split()
+        if len(parts) >= 3:
+            day = parts[2][:10]
+        elif len(parts) == 2:
+            day = parts[1][:10]
+        else:
+            continue
+        counts[day] = counts.get(day, 0) + 1
+    return counts
+
+
 def next_due(jobs: list[dict]) -> dict | None:
     pending = [j for j in jobs if j["status"] in {"pending", "error"}
                and j["attempts"] < MAX_ATTEMPTS]
