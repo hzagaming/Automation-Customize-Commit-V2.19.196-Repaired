@@ -16,6 +16,7 @@ LANGS = [
 
 I18N = {
     "en": {
+        "modeNow": "Now", "modeRandom": "Random pre-2000", "modeDaily": "Daily from 2000",
         "autoPre2000": "Random date before 2000",
         "tSaved": "Saved",
         "actEdit": "Edit", "saveEdit": "Save", "cancelEdit": "Cancel",
@@ -45,6 +46,7 @@ I18N = {
         "accent": "Accent", "lang": "Language", "onlyLocal": "local only", "backdated": "backdated",
     },
     "zh-CN": {
+        "modeNow": "当前时间", "modeRandom": "2000 年前随机", "modeDaily": "每天递增（从 2000）",
         "autoPre2000": "随机 2000 年前时间",
         "tSaved": "已保存",
         "actEdit": "编辑", "saveEdit": "保存", "cancelEdit": "取消",
@@ -74,6 +76,7 @@ I18N = {
         "accent": "强调色", "lang": "语言", "onlyLocal": "仅本地", "backdated": "回填",
     },
     "zh-TW": {
+        "modeNow": "目前時間", "modeRandom": "2000 年前隨機", "modeDaily": "每日遞增（從 2000）",
         "autoPre2000": "隨機 2000 年前時間",
         "tSaved": "已儲存",
         "actEdit": "編輯", "saveEdit": "儲存", "cancelEdit": "取消",
@@ -103,6 +106,7 @@ I18N = {
         "accent": "強調色", "lang": "語言", "onlyLocal": "僅本機", "backdated": "回填",
     },
     "ja": {
+        "modeNow": "現在時刻", "modeRandom": "2000 年以前ランダム", "modeDaily": "毎日加算（2000 から）",
         "autoPre2000": "2000 年より前の日時",
         "tSaved": "保存しました",
         "actEdit": "編集", "saveEdit": "保存", "cancelEdit": "キャンセル",
@@ -132,6 +136,7 @@ I18N = {
         "accent": "アクセント", "lang": "言語", "onlyLocal": "ローカルのみ", "backdated": "日時指定",
     },
     "ko": {
+        "modeNow": "현재 시각", "modeRandom": "2000년 이전 무작위", "modeDaily": "2000년부터 매일 증가",
         "autoPre2000": "2000년 이전 무작위 날짜",
         "tSaved": "저장됨",
         "actEdit": "편집", "saveEdit": "저장", "cancelEdit": "취소",
@@ -161,6 +166,7 @@ I18N = {
         "accent": "강조색", "lang": "언어", "onlyLocal": "로컬만", "backdated": "시각 지정",
     },
     "es": {
+        "modeNow": "Ahora", "modeRandom": "Aleatorio pre-2000", "modeDaily": "Diario desde 2000",
         "autoPre2000": "Fecha aleatoria antes de 2000",
         "tSaved": "Guardado",
         "actEdit": "Editar", "saveEdit": "Guardar", "cancelEdit": "Cancelar",
@@ -190,6 +196,7 @@ I18N = {
         "accent": "Acento", "lang": "Idioma", "onlyLocal": "solo local", "backdated": "retroactivo",
     },
     "fr": {
+        "modeNow": "Maintenant", "modeRandom": "Aléatoire avant 2000", "modeDaily": "Quotidien depuis 2000",
         "autoPre2000": "Date aléatoire avant 2000",
         "tSaved": "Enregistré",
         "actEdit": "Modifier", "saveEdit": "Enregistrer", "cancelEdit": "Annuler",
@@ -219,6 +226,7 @@ I18N = {
         "accent": "Accent", "lang": "Langue", "onlyLocal": "local seul", "backdated": "rétroactif",
     },
     "de": {
+        "modeNow": "Jetzt", "modeRandom": "Zufällig vor 2000", "modeDaily": "Täglich ab 2000",
         "autoPre2000": "Zufälliges Datum vor 2000",
         "tSaved": "Gespeichert",
         "actEdit": "Bearbeiten", "saveEdit": "Speichern", "cancelEdit": "Abbrechen",
@@ -248,6 +256,7 @@ I18N = {
         "accent": "Akzent", "lang": "Sprache", "onlyLocal": "nur lokal", "backdated": "rückdatiert",
     },
     "ru": {
+        "modeNow": "Сейчас", "modeRandom": "Случайно до 2000", "modeDaily": "Ежедневно с 2000",
         "autoPre2000": "Случайная дата до 2000",
         "tSaved": "Сохранено",
         "actEdit": "Изменить", "saveEdit": "Сохранить", "cancelEdit": "Отмена",
@@ -277,6 +286,7 @@ I18N = {
         "accent": "Акцент", "lang": "Язык", "onlyLocal": "только локально", "backdated": "задним числом",
     },
     "pt": {
+        "modeNow": "Agora", "modeRandom": "Aleatório antes de 2000", "modeDaily": "Diário desde 2000",
         "autoPre2000": "Data aleatória antes de 2000",
         "tSaved": "Salvo",
         "actEdit": "Editar", "saveEdit": "Salvar", "cancelEdit": "Cancelar",
@@ -306,6 +316,7 @@ I18N = {
         "accent": "Destaque", "lang": "Idioma", "onlyLocal": "só local", "backdated": "retroativo",
     },
     "ar": {
+        "modeNow": "الآن", "modeRandom": "عشوائي قبل 2000", "modeDaily": "يوميًا من 2000",
         "autoPre2000": "تاريخ عشوائي قبل 2000",
         "tSaved": "تم الحفظ",
         "actEdit": "تعديل", "saveEdit": "حفظ", "cancelEdit": "إلغاء",

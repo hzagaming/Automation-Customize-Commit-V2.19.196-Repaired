@@ -13,7 +13,7 @@ import random
 import signal
 import sys
 import time
-from datetime import date, datetime, time as clock, timezone
+from datetime import date, datetime, time as clock, timedelta, timezone
 from pathlib import Path
 
 from . import engine
@@ -40,7 +40,7 @@ def stamp_range(start: date, end: date) -> tuple[int, int]:
 
 
 def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
-        dates: tuple[int, int] | None = None) -> None:
+        dates: tuple[int, int] | None = None, daily_start: date | None = None) -> None:
     PID_FILE.write_text(str(os.getpid()), encoding="utf-8")
     log_path = repo / log_file
     done = 0
@@ -49,7 +49,11 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
         while count <= 0 or done < count:
             digest = hashlib.sha256(os.urandom(32)).hexdigest()
             env = {}
-            if dates:
+            if daily_start:
+                day = daily_start + timedelta(days=done)
+                stamp = datetime.combine(day, clock.min, tzinfo=timezone.utc).isoformat(timespec="seconds")
+                env = {"GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp}
+            elif dates:
                 ts = random.randint(dates[0], dates[1] - 1)
                 stamp = datetime.fromtimestamp(ts, timezone.utc).isoformat(timespec="seconds")
                 env = {"GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp}
@@ -87,6 +91,7 @@ def main() -> None:
     parser.add_argument("--log-file", default="hashes.log")
     parser.add_argument("--date-from", help="随机提交时间下限 YYYY-MM-DD")
     parser.add_argument("--date-to", help="随机提交时间上限 YYYY-MM-DD（不含）")
+    parser.add_argument("--daily-start", help="每天递增模式：从这一天开始，每个提交 +1 天")
     args = parser.parse_args()
 
     repo = Path(args.repo).expanduser().resolve()
@@ -95,8 +100,9 @@ def main() -> None:
     dates = None
     if args.date_from and args.date_to:
         dates = stamp_range(date.fromisoformat(args.date_from), date.fromisoformat(args.date_to))
+    daily = date.fromisoformat(args.daily_start) if args.daily_start else None
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
-    run(repo, args.interval, args.count, args.push_every, args.log_file, dates)
+    run(repo, args.interval, args.count, args.push_every, args.log_file, dates, daily)
 
 
 if __name__ == "__main__":

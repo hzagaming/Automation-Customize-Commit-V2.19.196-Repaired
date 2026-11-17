@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.209
+# Automation Customize Commit · V2.19.210
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -84,6 +84,14 @@ python3 -m commit_auto.auto --repo ~/code/proj --interval 30 --push-every 10
 
 时间戳一律用 ISO 8601 字符串传给 Git（`1971-01-04T14:22:29+00:00`）。Git 不接受 8 位以内的裸 Unix 时间戳（如 `31846949 +0000` 会报 invalid date format），这点踩过坑。
 
+三种时间模式（界面上是下拉框）：
+
+| 模式 | 参数 | 效果 |
+| --- | --- | --- |
+| 当前时间 | 无 | 提交时间是真实执行时刻 |
+| 2000 年前随机 | `--date-from 1970-01-01 --date-to 2000-01-01` | 每次在区间内随机取时刻 |
+| 每天递增 | `--daily-start 2000-01-01` | 从起始日 +1 天递增 |
+
 加 `--date-from 1970-01-01 --date-to 2000-01-01` 后，每次提交的时间戳会在 1970–2000 之间随机取一个（界面上的「随机 2000 年前时间」勾选框等价）。
 
 常驻进程：每轮生成一个随机 sha256 写进 `hashes.log`，提交信息取前 16 位，然后推送。`--interval` 控制节奏，`--count` 限制轮数（0 = 无限），`--push-every` 控制推送频率。PID 写在 `.state/auto.pid`。
@@ -125,6 +133,7 @@ python3 -m unittest discover -s tests
 
 当前 V2.19.197，版本号在 `VERSION` 文件，界面标题与 CLI `--version` 都从这里读。
 
+- **V2.19.210** 自动提交支持「每天递增」时间模式，GUI 下拉切换
 - **V2.19.209** 自动提交单轮失败不再退出（跳过并继续），GUI 每轮都推送
 - **V2.19.208** 修复早期时间戳被判 invalid date 的问题（改用 ISO 格式）
 - **V2.19.207** 自动提交支持 1970–2000 随机时间戳，GUI 加勾选框
