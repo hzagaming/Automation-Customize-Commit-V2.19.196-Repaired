@@ -667,7 +667,7 @@ def auto_start(repo: str, interval: float, mode: str = "now") -> dict:
     if mode == "pre2000":
         cmd += ["--date-from", "1970-01-01", "--date-to", "2000-01-01"]
     elif mode == "daily":
-        cmd += ["--daily-start", "2000-01-01"]
+        cmd += ["--daily-start", "1970-01-01", "--daily-end", "2000-01-01"]
     proc = subprocess.Popen(
         cmd,
         cwd=str(Path(__file__).resolve().parent.parent), stdout=log, stderr=log, start_new_session=True)

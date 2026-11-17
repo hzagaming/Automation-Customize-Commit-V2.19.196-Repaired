@@ -40,7 +40,8 @@ def stamp_range(start: date, end: date) -> tuple[int, int]:
 
 
 def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
-        dates: tuple[int, int] | None = None, daily_start: date | None = None) -> None:
+        dates: tuple[int, int] | None = None, daily_start: date | None = None,
+        daily_end: date | None = None) -> None:
     PID_FILE.write_text(str(os.getpid()), encoding="utf-8")
     log_path = repo / log_file
     done = 0
@@ -50,7 +51,9 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
             digest = hashlib.sha256(os.urandom(32)).hexdigest()
             env = {}
             if daily_start:
-                day = daily_start + timedelta(days=done)
+                span = (daily_end - daily_start).days if daily_end else 0
+                offset = done % span if span > 1 else done
+                day = daily_start + timedelta(days=offset)
                 stamp = datetime.combine(day, clock.min, tzinfo=timezone.utc).isoformat(timespec="seconds")
                 env = {"GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp}
             elif dates:
@@ -92,6 +95,7 @@ def main() -> None:
     parser.add_argument("--date-from", help="随机提交时间下限 YYYY-MM-DD")
     parser.add_argument("--date-to", help="随机提交时间上限 YYYY-MM-DD（不含）")
     parser.add_argument("--daily-start", help="每天递增模式：从这一天开始，每个提交 +1 天")
+    parser.add_argument("--daily-end", help="每天递增模式的终点（到点后回到起点循环）")
     args = parser.parse_args()
 
     repo = Path(args.repo).expanduser().resolve()
@@ -101,8 +105,9 @@ def main() -> None:
     if args.date_from and args.date_to:
         dates = stamp_range(date.fromisoformat(args.date_from), date.fromisoformat(args.date_to))
     daily = date.fromisoformat(args.daily_start) if args.daily_start else None
+    daily_end = date.fromisoformat(args.daily_end) if args.daily_end else None
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
-    run(repo, args.interval, args.count, args.push_every, args.log_file, dates, daily)
+    run(repo, args.interval, args.count, args.push_every, args.log_file, dates, daily, daily_end)
 
 
 if __name__ == "__main__":

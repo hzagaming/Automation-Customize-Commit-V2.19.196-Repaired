@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.213
+# Automation Customize Commit · V2.19.214
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -99,7 +99,7 @@ python3 -m commit_auto.auto --repo ~/code/proj --interval 30 --push-every 10
 | --- | --- | --- |
 | 当前时间 | 无 | 提交时间是真实执行时刻 |
 | 2000 年前随机 | `--date-from 1970-01-01 --date-to 2000-01-01` | 每次在区间内随机取时刻 |
-| 每天递增 | `--daily-start 2000-01-01` | 从起始日 +1 天递增 |
+| 每天递增 | `--daily-start 1970-01-01 --daily-end 2000-01-01` | 从起始日 +1 天递增，到终点回到起点循环 |
 
 加 `--date-from 1970-01-01 --date-to 2000-01-01` 后，每次提交的时间戳会在 1970–2000 之间随机取一个（界面上的「随机 2000 年前时间」勾选框等价）。
 
@@ -146,6 +146,7 @@ python3 -m unittest discover -s tests
 
 当前 V2.19.197，版本号在 `VERSION` 文件，界面标题与 CLI `--version` 都从这里读。
 
+- **V2.19.214** 每天递增模式支持终点并循环（1970→2000 共 30 年）
 - **V2.19.213** 自动提交热力图（真实时间）、自动填充仓库路径
 - **V2.19.212** macOS 通知开关、主题「跟随系统」
 - **V2.19.211** 任务导入 / 导出（JSON），含单测
