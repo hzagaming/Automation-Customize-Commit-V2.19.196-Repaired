@@ -98,6 +98,26 @@ def add_job(repo: str, at: str, message: str = "chore: scheduled commit", *,
     return job
 
 
+def import_jobs(items: list[dict]) -> int:
+    """把导出的任务追加回来，跳过无效条目。"""
+    added = 0
+    for item in items:
+        try:
+            add_job(item["repo"], item["at"], item.get("message", "chore: scheduled commit"),
+                    file=item.get("file"), branch=item.get("branch"),
+                    push=item.get("push", True), backdate=item.get("backdate", False),
+                    repeat=item.get("repeat", "none"), raw_date=item.get("raw_date"))
+        except (KeyError, ValueError, TypeError):
+            continue
+        added += 1
+    return added
+
+
+def export_jobs() -> list[dict]:
+    keep = {"repo", "at", "message", "file", "branch", "push", "backdate", "repeat", "raw_date"}
+    return [{k: v for k, v in job.items() if k in keep} for job in load_jobs()]
+
+
 def update_job(job_id: str, **fields) -> dict:
     jobs = load_jobs()
     for job in jobs:

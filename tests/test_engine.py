@@ -94,6 +94,22 @@ class EngineTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             engine.set_repeat(job["id"], "hourly")
 
+    def test_export_import_roundtrip(self):
+        engine.add_job(str(self.repo), self.future(), "roundtrip", file="x.log",
+                       push=False, repeat="daily")
+        exported = engine.export_jobs()
+        self.assertEqual(len(exported), 1)
+        self.assertEqual(exported[0]["message"], "roundtrip")
+        engine.delete_job(engine.load_jobs()[0]["id"])
+        self.assertEqual(engine.import_jobs(exported), 1)
+        restored = engine.load_jobs()[0]
+        self.assertEqual(restored["message"], "roundtrip")
+        self.assertEqual(restored["repeat"], "daily")
+        self.assertFalse(restored["push"])
+
+    def test_import_skips_invalid(self):
+        self.assertEqual(engine.import_jobs([{"repo": "/nope", "at": "09:30"}]), 0)
+
     def test_bad_time(self):
         with self.assertRaises(ValueError):
             engine.add_job(str(self.repo), "明天", "x")

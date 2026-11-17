@@ -169,6 +169,9 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
     <div class='bar'>
       <h2 style='margin:0' data-i18n='queue'></h2>
       <span class='sp'></span>
+      <button class='ghost' id='exportBtn' data-i18n='exportJobs'></button>
+      <button class='ghost' id='importBtn' data-i18n='importJobs'></button>
+      <input type='file' id='importFile' accept='application/json' style='display:none'>
       <button class='ghost' id='runNow' data-i18n='runDue'></button>
       <button class='ghost' id='agentBtn'></button>
     </div>
@@ -493,6 +496,20 @@ q('#add').onclick = async () => {
   }catch(e){ toast(fmt('tFail', {m: e.message})); }
 };
 
+q('#exportBtn').onclick = () => { window.location = '/api/jobs/export'; };
+q('#importBtn').onclick = () => q('#importFile').click();
+q('#importFile').onchange = async e => {
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const data = JSON.parse(await file.text());
+    const list = Array.isArray(data) ? data : (data.jobs || []);
+    const r = await api('/api/jobs/import', {jobs: list});
+    toast(fmt('tImported', {n: fmtNum(r.added)}));
+    load();
+  }catch(err){ toast(fmt('tFail', {m: err.message})); }
+  e.target.value = '';
+};
 q('#cancelEdit').onclick = () => { stopEdit(); };
 q('#runNow').onclick = async () => {
   try{
@@ -648,6 +665,15 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         if self.path in {"/", "/index.html"}:
             return self._send(200, render_page())
+        if self.path == "/api/jobs/export":
+            body = json.dumps(engine.export_jobs(), ensure_ascii=False, indent=2).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Disposition", 'attachment; filename="commit-jobs.json"')
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if self.path == "/api/state":
             return self._send(200, state_payload())
         if self.path.startswith("/api/heatmap"):
@@ -674,6 +700,9 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == "/api/jobs/run":
                 job = engine.run_job(body.get("id", ""))
                 return self._send(200, {"ok": True, "job": job})
+            if self.path == "/api/jobs/import":
+                added = engine.import_jobs(body.get("jobs") or [])
+                return self._send(200, {"ok": True, "added": added})
             if self.path == "/api/jobs/update":
                 job = engine.update_job(body.get("id", ""), at=body.get("at"),
                                         message=body.get("message"), file=body.get("file"),

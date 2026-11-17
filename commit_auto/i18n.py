@@ -16,6 +16,7 @@ LANGS = [
 
 I18N = {
     "en": {
+        "exportJobs": "Export", "importJobs": "Import", "tImported": "Imported {n}",
         "modeNow": "Now", "modeRandom": "Random pre-2000", "modeDaily": "Daily from 2000",
         "autoPre2000": "Random date before 2000",
         "tSaved": "Saved",
@@ -46,6 +47,7 @@ I18N = {
         "accent": "Accent", "lang": "Language", "onlyLocal": "local only", "backdated": "backdated",
     },
     "zh-CN": {
+        "exportJobs": "导出", "importJobs": "导入", "tImported": "已导入 {n} 条",
         "modeNow": "当前时间", "modeRandom": "2000 年前随机", "modeDaily": "每天递增（从 2000）",
         "autoPre2000": "随机 2000 年前时间",
         "tSaved": "已保存",
@@ -76,6 +78,7 @@ I18N = {
         "accent": "强调色", "lang": "语言", "onlyLocal": "仅本地", "backdated": "回填",
     },
     "zh-TW": {
+        "exportJobs": "匯出", "importJobs": "匯入", "tImported": "已匯入 {n} 條",
         "modeNow": "目前時間", "modeRandom": "2000 年前隨機", "modeDaily": "每日遞增（從 2000）",
         "autoPre2000": "隨機 2000 年前時間",
         "tSaved": "已儲存",
@@ -106,6 +109,7 @@ I18N = {
         "accent": "強調色", "lang": "語言", "onlyLocal": "僅本機", "backdated": "回填",
     },
     "ja": {
+        "exportJobs": "エクスポート", "importJobs": "インポート", "tImported": "{n} 件取り込み",
         "modeNow": "現在時刻", "modeRandom": "2000 年以前ランダム", "modeDaily": "毎日加算（2000 から）",
         "autoPre2000": "2000 年より前の日時",
         "tSaved": "保存しました",
@@ -136,6 +140,7 @@ I18N = {
         "accent": "アクセント", "lang": "言語", "onlyLocal": "ローカルのみ", "backdated": "日時指定",
     },
     "ko": {
+        "exportJobs": "내보내기", "importJobs": "가져오기", "tImported": "{n}개 가져옴",
         "modeNow": "현재 시각", "modeRandom": "2000년 이전 무작위", "modeDaily": "2000년부터 매일 증가",
         "autoPre2000": "2000년 이전 무작위 날짜",
         "tSaved": "저장됨",
@@ -166,6 +171,7 @@ I18N = {
         "accent": "강조색", "lang": "언어", "onlyLocal": "로컬만", "backdated": "시각 지정",
     },
     "es": {
+        "exportJobs": "Exportar", "importJobs": "Importar", "tImported": "{n} importadas",
         "modeNow": "Ahora", "modeRandom": "Aleatorio pre-2000", "modeDaily": "Diario desde 2000",
         "autoPre2000": "Fecha aleatoria antes de 2000",
         "tSaved": "Guardado",
@@ -196,6 +202,7 @@ I18N = {
         "accent": "Acento", "lang": "Idioma", "onlyLocal": "solo local", "backdated": "retroactivo",
     },
     "fr": {
+        "exportJobs": "Exporter", "importJobs": "Importer", "tImported": "{n} importée(s)",
         "modeNow": "Maintenant", "modeRandom": "Aléatoire avant 2000", "modeDaily": "Quotidien depuis 2000",
         "autoPre2000": "Date aléatoire avant 2000",
         "tSaved": "Enregistré",
@@ -226,6 +233,7 @@ I18N = {
         "accent": "Accent", "lang": "Langue", "onlyLocal": "local seul", "backdated": "rétroactif",
     },
     "de": {
+        "exportJobs": "Exportieren", "importJobs": "Importieren", "tImported": "{n} importiert",
         "modeNow": "Jetzt", "modeRandom": "Zufällig vor 2000", "modeDaily": "Täglich ab 2000",
         "autoPre2000": "Zufälliges Datum vor 2000",
         "tSaved": "Gespeichert",
@@ -256,6 +264,7 @@ I18N = {
         "accent": "Akzent", "lang": "Sprache", "onlyLocal": "nur lokal", "backdated": "rückdatiert",
     },
     "ru": {
+        "exportJobs": "Экспорт", "importJobs": "Импорт", "tImported": "Импортировано {n}",
         "modeNow": "Сейчас", "modeRandom": "Случайно до 2000", "modeDaily": "Ежедневно с 2000",
         "autoPre2000": "Случайная дата до 2000",
         "tSaved": "Сохранено",
@@ -286,6 +295,7 @@ I18N = {
         "accent": "Акцент", "lang": "Язык", "onlyLocal": "только локально", "backdated": "задним числом",
     },
     "pt": {
+        "exportJobs": "Exportar", "importJobs": "Importar", "tImported": "{n} importadas",
         "modeNow": "Agora", "modeRandom": "Aleatório antes de 2000", "modeDaily": "Diário desde 2000",
         "autoPre2000": "Data aleatória antes de 2000",
         "tSaved": "Salvo",
@@ -316,6 +326,7 @@ I18N = {
         "accent": "Destaque", "lang": "Idioma", "onlyLocal": "só local", "backdated": "retroativo",
     },
     "ar": {
+        "exportJobs": "تصدير", "importJobs": "استيراد", "tImported": "تم استيراد {n}",
         "modeNow": "الآن", "modeRandom": "عشوائي قبل 2000", "modeDaily": "يوميًا من 2000",
         "autoPre2000": "تاريخ عشوائي قبل 2000",
         "tSaved": "تم الحفظ",

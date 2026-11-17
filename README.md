@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.210
+# Automation Customize Commit · V2.19.211
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -105,6 +105,10 @@ python3 -m commit_auto.backfill --repo ~/code/proj --loop --pause 300   # 跑完
 
 用 `git fast-import` 一次性写出从起始日期到今天的每日提交（2 万条约 0.5 秒），不产生文件改动，工作区保持干净。仅用于时间戳研究：GitHub 贡献图只统计最近 12 个月，回填 1970 年不会多出绿色格子。
 
+## 导入 / 导出任务
+
+任务队列工具条上的「导出」会把全部任务存成 JSON（`commit-jobs.json`），「导入」可把它合并回来，无效条目自动跳过。适合备份或在新机器上恢复配置。
+
 ## 编辑任务
 
 任务行里的「编辑」会把整条任务载入上方表单，改完点「保存」即生效（时间改了会自动重置为待执行）。「取消」退出编辑态。
@@ -133,6 +137,7 @@ python3 -m unittest discover -s tests
 
 当前 V2.19.197，版本号在 `VERSION` 文件，界面标题与 CLI `--version` 都从这里读。
 
+- **V2.19.211** 任务导入 / 导出（JSON），含单测
 - **V2.19.210** 自动提交支持「每天递增」时间模式，GUI 下拉切换
 - **V2.19.209** 自动提交单轮失败不再退出（跳过并继续），GUI 每轮都推送
 - **V2.19.208** 修复早期时间戳被判 invalid date 的问题（改用 ISO 格式）
