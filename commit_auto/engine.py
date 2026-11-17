@@ -39,6 +39,37 @@ def parse_at(text: str) -> datetime:
     raise ValueError(f"无法识别的时间: {text!r}")
 
 
+def settings() -> dict:
+    path = state_dir() / "settings.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+
+
+def set_setting(key: str, value) -> dict:
+    data = settings()
+    data[key] = value
+    path = state_dir() / "settings.json"
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(path)
+    return data
+
+
+def notify(title: str, body: str) -> None:
+    if not settings().get("notify"):
+        return
+    try:
+        subprocess.run(["osascript", "-e",
+                        f'display notification "{body}" with title "{title}"'],
+                       capture_output=True, timeout=8)
+    except (OSError, subprocess.SubprocessError):
+        pass
+
+
 def log(message: str) -> None:
     with (state_dir() / "run.log").open("a", encoding="utf-8") as fh:
         fh.write(f"{datetime.now():%Y-%m-%d %H:%M:%S} {message}\n")
@@ -203,10 +234,12 @@ def _attempt(job: dict, now: datetime | None = None) -> bool:
     except Exception as exc:  # noqa: BLE001 - surfaced to UI, retried next tick
         job.update(status="error", attempts=job["attempts"] + 1, last_error=str(exc))
         log(f"ERROR {job['id']} {job['repo']} {exc}")
+        notify("Commit failed", f"{Path(job['repo']).name}: {exc}"[:180])
         return False
     job.update(status="done", attempts=job["attempts"] + 1, last_error=None,
                last_run=datetime.now().isoformat(timespec="seconds"))
     log(f"OK {job['id']} {job['repo']} {job['message']} push={job['push']}")
+    notify("Commit done", f"{Path(job['repo']).name}: {job['message']}"[:180])
     _reschedule(job)
     return True
 

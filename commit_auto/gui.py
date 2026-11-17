@@ -110,6 +110,7 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
       <select id='themeSel'>
         <option value='dark' data-i18n='dark'></option>
         <option value='light' data-i18n='light'></option>
+        <option value='system' data-i18n='themeSystem'></option>
       </select>
       <div class='dots' id='dots'></div>
     </div>
@@ -169,6 +170,7 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
     <div class='bar'>
       <h2 style='margin:0' data-i18n='queue'></h2>
       <span class='sp'></span>
+      <button class='ghost' id='notifyBtn'></button>
       <button class='ghost' id='exportBtn' data-i18n='exportJobs'></button>
       <button class='ghost' id='importBtn' data-i18n='importJobs'></button>
       <input type='file' id='importFile' accept='application/json' style='display:none'>
@@ -268,10 +270,16 @@ function applyLang(){
   tick();
 }
 
+function effectiveTheme(){
+  const t0 = localStorage.getItem('theme') || 'dark';
+  if(t0 !== 'system') return t0;
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+}
+
 function applyTheme(){
   const theme = localStorage.getItem('theme') || 'dark';
   const acc = localStorage.getItem('accent') || ACCENTS[0];
-  document.body.dataset.theme = theme;
+  document.body.dataset.theme = effectiveTheme();
   document.documentElement.style.setProperty('--acc', acc);
   q('#dots').querySelectorAll('.dot').forEach(d => d.classList.toggle('on', d.dataset.c === acc));
   q('#themeSel').value = theme;
@@ -292,6 +300,9 @@ q('#langSel').onchange = e => {
   applyLang(); load();
 };
 q('#themeSel').onchange = e => { localStorage.setItem('theme', e.target.value); applyTheme(); };
+if(window.matchMedia){
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => applyTheme());
+}
 
 function toast(msg){
   const el = q('#toast');
@@ -431,6 +442,8 @@ async function load(){
   q('#repos').innerHTML = repos.map(r => '<option value="'+r+'">').join('');
 
   window._auto = s.auto || {running: false};
+  window._notify = !!s.notify;
+  q('#notifyBtn').textContent = s.notify ? t('notifyOn') : t('notifyOff');
   renderAuto();
   nextAt = s.next ? s.next.at : null;
   tick();
@@ -492,6 +505,14 @@ q('#add').onclick = async () => {
       await api('/api/jobs', body);
       toast(t('tAdded') + ' ' + fmtAt(body.at));
     }
+    load();
+  }catch(e){ toast(fmt('tFail', {m: e.message})); }
+};
+
+q('#notifyBtn').onclick = async () => {
+  try{
+    await api('/api/settings', {notify: !window._notify});
+    toast(!window._notify ? t('notifyOn') : t('notifyOff'));
     load();
   }catch(e){ toast(fmt('tFail', {m: e.message})); }
 };
@@ -644,6 +665,7 @@ def state_payload() -> dict:
         "next": engine.next_due(jobs),
         "log": engine.tail_log(),
         "auto": auto_state(),
+        "notify": bool(engine.settings().get("notify")),
     }
 
 
@@ -718,6 +740,9 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == "/api/run":
                 due = engine.run_due()
                 return self._send(200, {"count": len(due), "jobs": due})
+            if self.path == "/api/settings":
+                engine.set_setting("notify", bool(body.get("notify")))
+                return self._send(200, {"ok": True})
             if self.path == "/api/auto":
                 action = body.get("action")
                 if action == "stop":

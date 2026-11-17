@@ -16,6 +16,8 @@ LANGS = [
 
 I18N = {
     "en": {
+        "themeSystem": "System",
+        "notifyOn": "Notify: on", "notifyOff": "Notify: off",
         "exportJobs": "Export", "importJobs": "Import", "tImported": "Imported {n}",
         "modeNow": "Now", "modeRandom": "Random pre-2000", "modeDaily": "Daily from 2000",
         "autoPre2000": "Random date before 2000",
@@ -47,6 +49,8 @@ I18N = {
         "accent": "Accent", "lang": "Language", "onlyLocal": "local only", "backdated": "backdated",
     },
     "zh-CN": {
+        "themeSystem": "跟随系统",
+        "notifyOn": "通知：开", "notifyOff": "通知：关",
         "exportJobs": "导出", "importJobs": "导入", "tImported": "已导入 {n} 条",
         "modeNow": "当前时间", "modeRandom": "2000 年前随机", "modeDaily": "每天递增（从 2000）",
         "autoPre2000": "随机 2000 年前时间",
@@ -78,6 +82,8 @@ I18N = {
         "accent": "强调色", "lang": "语言", "onlyLocal": "仅本地", "backdated": "回填",
     },
     "zh-TW": {
+        "themeSystem": "跟隨系統",
+        "notifyOn": "通知：開", "notifyOff": "通知：關",
         "exportJobs": "匯出", "importJobs": "匯入", "tImported": "已匯入 {n} 條",
         "modeNow": "目前時間", "modeRandom": "2000 年前隨機", "modeDaily": "每日遞增（從 2000）",
         "autoPre2000": "隨機 2000 年前時間",
@@ -109,6 +115,8 @@ I18N = {
         "accent": "強調色", "lang": "語言", "onlyLocal": "僅本機", "backdated": "回填",
     },
     "ja": {
+        "themeSystem": "システム",
+        "notifyOn": "通知: オン", "notifyOff": "通知: オフ",
         "exportJobs": "エクスポート", "importJobs": "インポート", "tImported": "{n} 件取り込み",
         "modeNow": "現在時刻", "modeRandom": "2000 年以前ランダム", "modeDaily": "毎日加算（2000 から）",
         "autoPre2000": "2000 年より前の日時",
@@ -140,6 +148,8 @@ I18N = {
         "accent": "アクセント", "lang": "言語", "onlyLocal": "ローカルのみ", "backdated": "日時指定",
     },
     "ko": {
+        "themeSystem": "시스템",
+        "notifyOn": "알림: 켬", "notifyOff": "알림: 끔",
         "exportJobs": "내보내기", "importJobs": "가져오기", "tImported": "{n}개 가져옴",
         "modeNow": "현재 시각", "modeRandom": "2000년 이전 무작위", "modeDaily": "2000년부터 매일 증가",
         "autoPre2000": "2000년 이전 무작위 날짜",
@@ -171,6 +181,8 @@ I18N = {
         "accent": "강조색", "lang": "언어", "onlyLocal": "로컬만", "backdated": "시각 지정",
     },
     "es": {
+        "themeSystem": "Sistema",
+        "notifyOn": "Aviso: sí", "notifyOff": "Aviso: no",
         "exportJobs": "Exportar", "importJobs": "Importar", "tImported": "{n} importadas",
         "modeNow": "Ahora", "modeRandom": "Aleatorio pre-2000", "modeDaily": "Diario desde 2000",
         "autoPre2000": "Fecha aleatoria antes de 2000",
@@ -202,6 +214,8 @@ I18N = {
         "accent": "Acento", "lang": "Idioma", "onlyLocal": "solo local", "backdated": "retroactivo",
     },
     "fr": {
+        "themeSystem": "Système",
+        "notifyOn": "Notif : oui", "notifyOff": "Notif : non",
         "exportJobs": "Exporter", "importJobs": "Importer", "tImported": "{n} importée(s)",
         "modeNow": "Maintenant", "modeRandom": "Aléatoire avant 2000", "modeDaily": "Quotidien depuis 2000",
         "autoPre2000": "Date aléatoire avant 2000",
@@ -233,6 +247,8 @@ I18N = {
         "accent": "Accent", "lang": "Langue", "onlyLocal": "local seul", "backdated": "rétroactif",
     },
     "de": {
+        "themeSystem": "System",
+        "notifyOn": "Mitteilung: an", "notifyOff": "Mitteilung: aus",
         "exportJobs": "Exportieren", "importJobs": "Importieren", "tImported": "{n} importiert",
         "modeNow": "Jetzt", "modeRandom": "Zufällig vor 2000", "modeDaily": "Täglich ab 2000",
         "autoPre2000": "Zufälliges Datum vor 2000",
@@ -264,6 +280,8 @@ I18N = {
         "accent": "Akzent", "lang": "Sprache", "onlyLocal": "nur lokal", "backdated": "rückdatiert",
     },
     "ru": {
+        "themeSystem": "Система",
+        "notifyOn": "Уведомления: вкл", "notifyOff": "Уведомления: выкл",
         "exportJobs": "Экспорт", "importJobs": "Импорт", "tImported": "Импортировано {n}",
         "modeNow": "Сейчас", "modeRandom": "Случайно до 2000", "modeDaily": "Ежедневно с 2000",
         "autoPre2000": "Случайная дата до 2000",
@@ -295,6 +313,8 @@ I18N = {
         "accent": "Акцент", "lang": "Язык", "onlyLocal": "только локально", "backdated": "задним числом",
     },
     "pt": {
+        "themeSystem": "Sistema",
+        "notifyOn": "Aviso: ligado", "notifyOff": "Aviso: desligado",
         "exportJobs": "Exportar", "importJobs": "Importar", "tImported": "{n} importadas",
         "modeNow": "Agora", "modeRandom": "Aleatório antes de 2000", "modeDaily": "Diário desde 2000",
         "autoPre2000": "Data aleatória antes de 2000",
@@ -326,6 +346,8 @@ I18N = {
         "accent": "Destaque", "lang": "Idioma", "onlyLocal": "só local", "backdated": "retroativo",
     },
     "ar": {
+        "themeSystem": "النظام",
+        "notifyOn": "الإشعارات: مفعّل", "notifyOff": "الإشعارات: متوقف",
         "exportJobs": "تصدير", "importJobs": "استيراد", "tImported": "تم استيراد {n}",
         "modeNow": "الآن", "modeRandom": "عشوائي قبل 2000", "modeDaily": "يوميًا من 2000",
         "autoPre2000": "تاريخ عشوائي قبل 2000",
