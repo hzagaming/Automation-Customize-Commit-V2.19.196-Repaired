@@ -243,21 +243,6 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
   </div>
 
   <div class='card'>
-    <h2 style='margin:0 0 12px' data-i18n='fleet'></h2>
-    <table>
-      <thead><tr>
-        <th style='width:110px' data-i18n='fleetNode'></th>
-        <th data-i18n='thRepo'></th>
-        <th style='width:90px' data-i18n='fleetRate'></th>
-        <th style='width:110px' data-i18n='fleetMode'></th>
-        <th style='width:120px' data-i18n='fleetBeat'></th>
-        <th style='width:110px' data-i18n='fleetAuto'></th>
-      </tr></thead>
-      <tbody id='fleet'><tr><td colspan='6' class='empty'></td></tr></tbody>
-    </table>
-  </div>
-
-  <div class='card'>
     <div class='hm-head'>
       <h2 style='margin:0' data-i18n='autoHeat'></h2>
       <input type='text' id='ahRepo' data-i18n-ph='heatPh'>
