@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.216
+# Automation Customize Commit · V2.19.217
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -55,6 +55,12 @@ Git 内部是 Unix 时间戳，普通 git 命令不接受负值，所以 **1969 
 ## 失败重试
 
 commit 或 push 失败会记 `error` 并累计次数，最多重试 5 次，每次轮询都会再试。日志见界面底部，文件在 `.state/run.log`。
+
+## 机群面板
+
+界面中间多了一张「机群」表：自动扫描 `.state/` 下每个节点目录的 `auto.json`，显示节点名、仓库、间隔、时间模式、心跳秒数和运行状态。多个仓库同时跑自动提交时，不用来回切命令行。
+
+节点配置由 `management-cluster/fleet.sh` 写入，格式与单节点一致。
 
 ## 两张热力图
 
@@ -160,6 +166,7 @@ python3 -m unittest discover -s tests
 
 当前 V2.19.197，版本号在 `VERSION` 文件，界面标题与 CLI `--version` 都从这里读。
 
+- **V2.19.217** 机群面板：一屏看多节点运行状态
 - **V2.19.216** 回填推送失败自动分批（chunked push）
 - **V2.19.215** 看门狗（心跳检测 + 自动重启 + 日期续跑）
 - **V2.19.214** 每天递增模式支持终点并循环（1970→2000 共 30 年）

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import subprocess
 import uuid
 from datetime import datetime, timedelta
@@ -283,6 +284,45 @@ def set_repeat(job_id: str, repeat: str) -> dict:
             save_jobs(jobs)
             return job
     raise KeyError(f"没有任务 {job_id}")
+
+
+def fleet_nodes() -> list[dict]:
+    """扫描状态目录下所有 auto.json，汇总成机群列表。"""
+    root = state_dir()
+    nodes = []
+    candidates = [root] + sorted(p for p in root.iterdir() if p.is_dir()) if root.exists() else []
+    for folder in candidates:
+        cfg_path = folder / "auto.json"
+        if not cfg_path.exists():
+            continue
+        try:
+            cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        hb = folder / "auto.hb"
+        age = None
+        if hb.exists():
+            try:
+                age = round(time.time() - float(hb.read_text(encoding="utf-8").strip()), 1)
+            except ValueError:
+                age = None
+        limit = max(3 * float(cfg.get("interval", 30)), 60)
+        repo = Path(cfg.get("repo", ""))
+        auto_count = None
+        log = repo / "hashes.log"
+        if log.exists():
+            with log.open(encoding="utf-8") as fh:
+                auto_count = sum(1 for _ in fh)
+        nodes.append({
+            "name": folder.name if folder != root else "default",
+            "repo": cfg.get("repo", ""),
+            "interval": cfg.get("interval", 30),
+            "mode": cfg.get("mode", "now"),
+            "heartbeat_age": age,
+            "running": age is not None and age < limit,
+            "auto_count": auto_count,
+        })
+    return nodes
 
 
 def commit_days(repo: str, days: int = 371) -> dict[str, int]:

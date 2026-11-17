@@ -16,6 +16,7 @@ LANGS = [
 
 I18N = {
     "en": {
+        "fleet": "Fleet", "fleetNode": "Node", "fleetRate": "Rate", "fleetMode": "Mode", "fleetBeat": "Heartbeat", "fleetAuto": "Auto", "fleetEmpty": "Fleet ∅",
         "autoHeat": "Auto commit heatmap (real time)",
         "themeSystem": "System",
         "notifyOn": "Notify: on", "notifyOff": "Notify: off",
@@ -50,6 +51,7 @@ I18N = {
         "accent": "Accent", "lang": "Language", "onlyLocal": "local only", "backdated": "backdated",
     },
     "zh-CN": {
+        "fleet": "机群", "fleetNode": "节点", "fleetRate": "间隔", "fleetMode": "模式", "fleetBeat": "心跳", "fleetAuto": "自动提交", "fleetEmpty": "机群 ∅",
         "autoHeat": "自动提交热力图（真实时间）",
         "themeSystem": "跟随系统",
         "notifyOn": "通知：开", "notifyOff": "通知：关",
@@ -84,6 +86,7 @@ I18N = {
         "accent": "强调色", "lang": "语言", "onlyLocal": "仅本地", "backdated": "回填",
     },
     "zh-TW": {
+        "fleet": "機群", "fleetNode": "節點", "fleetRate": "間隔", "fleetMode": "模式", "fleetBeat": "心跳", "fleetAuto": "自動提交", "fleetEmpty": "機群 ∅",
         "autoHeat": "自動提交熱力圖（真實時間）",
         "themeSystem": "跟隨系統",
         "notifyOn": "通知：開", "notifyOff": "通知：關",
@@ -118,6 +121,7 @@ I18N = {
         "accent": "強調色", "lang": "語言", "onlyLocal": "僅本機", "backdated": "回填",
     },
     "ja": {
+        "fleet": "ノード群", "fleetNode": "ノード", "fleetRate": "間隔", "fleetMode": "モード", "fleetBeat": "心拍", "fleetAuto": "自動", "fleetEmpty": "ノード群 ∅",
         "autoHeat": "自動コミットのヒートマップ（実際の時刻）",
         "themeSystem": "システム",
         "notifyOn": "通知: オン", "notifyOff": "通知: オフ",
@@ -152,6 +156,7 @@ I18N = {
         "accent": "アクセント", "lang": "言語", "onlyLocal": "ローカルのみ", "backdated": "日時指定",
     },
     "ko": {
+        "fleet": "클러스터", "fleetNode": "노드", "fleetRate": "간격", "fleetMode": "모드", "fleetBeat": "하트비트", "fleetAuto": "자동", "fleetEmpty": "클러스터 ∅",
         "autoHeat": "자동 커밋 히트맵(실제 시간)",
         "themeSystem": "시스템",
         "notifyOn": "알림: 켬", "notifyOff": "알림: 끔",
@@ -186,6 +191,7 @@ I18N = {
         "accent": "강조색", "lang": "언어", "onlyLocal": "로컬만", "backdated": "시각 지정",
     },
     "es": {
+        "fleet": "Flota", "fleetNode": "Nodo", "fleetRate": "Intervalo", "fleetMode": "Modo", "fleetBeat": "Latido", "fleetAuto": "Auto", "fleetEmpty": "Flota ∅",
         "autoHeat": "Mapa de commits automáticos (hora real)",
         "themeSystem": "Sistema",
         "notifyOn": "Aviso: sí", "notifyOff": "Aviso: no",
@@ -220,6 +226,7 @@ I18N = {
         "accent": "Acento", "lang": "Idioma", "onlyLocal": "solo local", "backdated": "retroactivo",
     },
     "fr": {
+        "fleet": "Flotte", "fleetNode": "Nœud", "fleetRate": "Intervalle", "fleetMode": "Mode", "fleetBeat": "Battement", "fleetAuto": "Auto", "fleetEmpty": "Flotte ∅",
         "autoHeat": "Carte des commits auto (heure réelle)",
         "themeSystem": "Système",
         "notifyOn": "Notif : oui", "notifyOff": "Notif : non",
@@ -254,6 +261,7 @@ I18N = {
         "accent": "Accent", "lang": "Langue", "onlyLocal": "local seul", "backdated": "rétroactif",
     },
     "de": {
+        "fleet": "Flotte", "fleetNode": "Knoten", "fleetRate": "Intervall", "fleetMode": "Modus", "fleetBeat": "Herzschlag", "fleetAuto": "Auto", "fleetEmpty": "Flotte ∅",
         "autoHeat": "Auto-Commit-Heatmap (Echtzeit)",
         "themeSystem": "System",
         "notifyOn": "Mitteilung: an", "notifyOff": "Mitteilung: aus",
@@ -288,6 +296,7 @@ I18N = {
         "accent": "Akzent", "lang": "Sprache", "onlyLocal": "nur lokal", "backdated": "rückdatiert",
     },
     "ru": {
+        "fleet": "Флот", "fleetNode": "Узел", "fleetRate": "Интервал", "fleetMode": "Режим", "fleetBeat": "Сигнал", "fleetAuto": "Авто", "fleetEmpty": "Флот ∅",
         "autoHeat": "Карта авто-коммитов (реальное время)",
         "themeSystem": "Система",
         "notifyOn": "Уведомления: вкл", "notifyOff": "Уведомления: выкл",
@@ -322,6 +331,7 @@ I18N = {
         "accent": "Акцент", "lang": "Язык", "onlyLocal": "только локально", "backdated": "задним числом",
     },
     "pt": {
+        "fleet": "Frota", "fleetNode": "Nó", "fleetRate": "Intervalo", "fleetMode": "Modo", "fleetBeat": "Batida", "fleetAuto": "Auto", "fleetEmpty": "Frota ∅",
         "autoHeat": "Mapa de commits automáticos (hora real)",
         "themeSystem": "Sistema",
         "notifyOn": "Aviso: ligado", "notifyOff": "Aviso: desligado",
@@ -356,6 +366,7 @@ I18N = {
         "accent": "Destaque", "lang": "Idioma", "onlyLocal": "só local", "backdated": "retroativo",
     },
     "ar": {
+        "fleet": "الأسطول", "fleetNode": "عقدة", "fleetRate": "الفاصل", "fleetMode": "الوضع", "fleetBeat": "النبض", "fleetAuto": "تلقائي", "fleetEmpty": "الأسطول ∅",
         "autoHeat": "خريطة الالتزامات التلقائية (الوقت الفعلي)",
         "themeSystem": "النظام",
         "notifyOn": "الإشعارات: مفعّل", "notifyOff": "الإشعارات: متوقف",

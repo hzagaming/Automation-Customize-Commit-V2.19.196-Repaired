@@ -208,6 +208,21 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
   </div>
 
   <div class='card'>
+    <h2 style='margin:0 0 12px' data-i18n='fleet'></h2>
+    <table>
+      <thead><tr>
+        <th style='width:110px' data-i18n='fleetNode'></th>
+        <th data-i18n='thRepo'></th>
+        <th style='width:90px' data-i18n='fleetRate'></th>
+        <th style='width:110px' data-i18n='fleetMode'></th>
+        <th style='width:120px' data-i18n='fleetBeat'></th>
+        <th style='width:110px' data-i18n='fleetAuto'></th>
+      </tr></thead>
+      <tbody id='fleet'><tr><td colspan='6' class='empty'></td></tr></tbody>
+    </table>
+  </div>
+
+  <div class='card'>
     <div class='hm-head'>
       <h2 style='margin:0' data-i18n='heat'></h2>
       <input type='text' id='hmRepo' data-i18n-ph='heatPh'>
@@ -225,6 +240,21 @@ border:1px solid var(--line);padding:10px 18px;border-radius:10px;font-size:13px
       <span class='hm-cell' data-l='4'></span>
       <span data-i18n='more'></span>
     </div>
+  </div>
+
+  <div class='card'>
+    <h2 style='margin:0 0 12px' data-i18n='fleet'></h2>
+    <table>
+      <thead><tr>
+        <th style='width:110px' data-i18n='fleetNode'></th>
+        <th data-i18n='thRepo'></th>
+        <th style='width:90px' data-i18n='fleetRate'></th>
+        <th style='width:110px' data-i18n='fleetMode'></th>
+        <th style='width:120px' data-i18n='fleetBeat'></th>
+        <th style='width:110px' data-i18n='fleetAuto'></th>
+      </tr></thead>
+      <tbody id='fleet'><tr><td colspan='6' class='empty'></td></tr></tbody>
+    </table>
   </div>
 
   <div class='card'>
@@ -499,6 +529,24 @@ async function load(){
       catch(e){ toast(fmt('tFail', {m: e.message})); }
     });
   }
+  const fleet = s.fleet || [];
+  const fb = q('#fleet');
+  if(!fleet.length){
+    fb.innerHTML = "<tr><td colspan='6' class='empty'>" + t('fleetEmpty') + "</td></tr>";
+  } else {
+    const modeName = m => m === 'pre2000' ? t('modeRandom') : m === 'daily' ? t('modeDaily') : t('modeNow');
+    fb.innerHTML = fleet.map(n =>
+      '<tr><td class="mono">'+n.name+'</td>'+
+      '<td class="mono">'+n.repo+'</td>'+
+      '<td class="mono">'+(n.interval ? n.interval+'s' : '—')+'</td>'+
+      '<td class="mono">'+modeName(n.mode)+'</td>'+
+      '<td class="mono">'+(n.heartbeat_age === null ? '—' : n.heartbeat_age+'s')+'</td>'+
+      '<td><span class="st '+(n.running ? 'done' : 'error')+'">'+
+        (n.running ? t('agentOn') : t('agentOff'))+'</span>'+
+        (n.auto_count !== null ? ' <span class="mono">'+fmtNum(n.auto_count)+'</span>' : '')+
+      '</td></tr>').join('');
+  }
+
   q('#log').textContent = s.log.length ? s.log.join('\n') : t('logEmpty');
 }
 
@@ -698,6 +746,7 @@ def state_payload() -> dict:
         "log": engine.tail_log(),
         "auto": auto_state(),
         "notify": bool(engine.settings().get("notify")),
+        "fleet": engine.fleet_nodes(),
     }
 
 
