@@ -67,10 +67,13 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
                 env = {"GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp}
             else:
                 stamp = datetime.now().isoformat(timespec="seconds")
+            line = f"{digest} {stamp} {datetime.now().isoformat(timespec='seconds')}\n"
             try:
                 with log_path.open("a", encoding="utf-8") as fh:
-                    fh.write(f"{digest} {stamp} {datetime.now().isoformat(timespec='seconds')}\n")
-                engine.git(repo, "add", "--", log_file)
+                    fh.write(line)
+                with (repo / "auto-latest.txt").open("w", encoding="utf-8") as fh:
+                    fh.write(line)
+                engine.git(repo, "add", "--", "auto-latest.txt")
                 engine.git(repo, "commit", "-q", "-m", f"chore: {digest[:16]}", env=env)
             except (RuntimeError, OSError) as exc:
                 failures += 1

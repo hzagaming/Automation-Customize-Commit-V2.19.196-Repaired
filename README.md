@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.215
+# Automation Customize Commit · V2.19.216
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -115,6 +115,10 @@ python3 -m commit_auto.auto --repo ~/code/proj --interval 30 --push-every 10
 
 常驻进程：每轮生成一个随机 sha256 写进 `hashes.log`，提交信息取前 16 位，然后推送。`--interval` 控制节奏，`--count` 限制轮数（0 = 无限），`--push-every` 控制推送频率。PID 写在 `.state/auto.pid`。
 
+## 分批推送
+
+一次性推送两百万条提交时，GitHub 偶尔返回 `fatal error in commit_refs_rules`。推送失败会自动退化成按 5 万条一批的 `chunked_push`，从远端已有位置继续，不重发历史。实测 241 条与 120 万条的仓库都能推完。
+
 ## 历史回填
 
 ```bash
@@ -156,6 +160,7 @@ python3 -m unittest discover -s tests
 
 当前 V2.19.197，版本号在 `VERSION` 文件，界面标题与 CLI `--version` 都从这里读。
 
+- **V2.19.216** 回填推送失败自动分批（chunked push）
 - **V2.19.215** 看门狗（心跳检测 + 自动重启 + 日期续跑）
 - **V2.19.214** 每天递增模式支持终点并循环（1970→2000 共 30 年）
 - **V2.19.213** 自动提交热力图（真实时间）、自动填充仓库路径
