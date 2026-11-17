@@ -43,8 +43,12 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
         dates: tuple[int, int] | None = None, daily_start: date | None = None,
         daily_end: date | None = None) -> None:
     PID_FILE.write_text(str(os.getpid()), encoding="utf-8")
+    (engine.state_dir() / "auto.hb").write_text(str(time.time()), encoding="utf-8")
     log_path = repo / log_file
     done = 0
+    base = 0
+    if daily_start and log_path.exists():
+        base = sum(1 for _ in log_path.open(encoding="utf-8"))
     failures = 0
     try:
         while count <= 0 or done < count:
@@ -52,7 +56,8 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
             env = {}
             if daily_start:
                 span = (daily_end - daily_start).days if daily_end else 0
-                offset = done % span if span > 1 else done
+                position = base + done
+                offset = position % span if span > 1 else position
                 day = daily_start + timedelta(days=offset)
                 stamp = datetime.combine(day, clock.min, tzinfo=timezone.utc).isoformat(timespec="seconds")
                 env = {"GIT_AUTHOR_DATE": stamp, "GIT_COMMITTER_DATE": stamp}
@@ -73,6 +78,7 @@ def run(repo: Path, interval: float, count: int, push_every: int, log_file: str,
                 time.sleep(interval)
                 continue
             done += 1
+            (engine.state_dir() / "auto.hb").write_text(str(time.time()), encoding="utf-8")
             print(f"{stamp} #{done} {digest[:16]}", flush=True)
             if push_every and done % push_every == 0:
                 push(repo)

@@ -7,6 +7,7 @@ import os
 import signal
 import subprocess
 import sys
+import time
 import webbrowser
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -641,15 +642,15 @@ def auto_state() -> dict:
         data = json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
         return {"running": False}
-    pid = data.get("pid")
-    alive = False
-    if pid:
+    hb = engine.state_dir() / "auto.hb"
+    fresh = False
+    if hb.exists():
         try:
-            os.kill(pid, 0)
-            alive = True
-        except OSError:
-            alive = False
-    data["running"] = alive
+            limit = max(3 * float(data.get("interval", 30)), 60)
+            fresh = time.time() - float(hb.read_text(encoding="utf-8").strip()) < limit
+        except ValueError:
+            fresh = False
+    data["running"] = fresh
     return data
 
 

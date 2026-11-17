@@ -1,4 +1,4 @@
-# Automation Customize Commit · V2.19.214
+# Automation Customize Commit · V2.19.215
 
 按**你自己选的时间**自动执行 `git commit`，并按需推送到 GitHub。图形界面 + 命令行 + 后台守护代理，零第三方依赖（只用 Python 标准库和 git）。
 
@@ -60,6 +60,16 @@ commit 或 push 失败会记 `error` 并累计次数，最多重试 5 次，每�
 
 - **提交热力图**：按 `git log` 的提交日期统计，反映仓库历史
 - **自动提交热力图（真实时间）**：按 `hashes.log` 里记录的真实发生时间统计。因为自动提交会把时间戳改成 1970–2000，普通热力图看不到它们，这张才是真实节奏
+
+## 看门狗
+
+```bash
+python3 -m commit_auto.watchdog 10
+```
+
+每 10 秒检查一次 `.state/auto.hb` 心跳。自动提交进程每完成一次写一次心跳，超过 `max(3×间隔, 60)` 秒没有心跳就判定挂掉，按 `.state/auto.json` 里的配置原样重启（时间模式、间隔都保留）。重启后会按 `hashes.log` 的行数续上日期，不会退回起点。
+
+进程被 `kill -9` 后约 90 秒内自动恢复，实测有效。开机自启可以把 watchdog 注册成 launchd 任务，需要写 `~/Library/LaunchAgents`。
 
 ## 通知
 
@@ -146,6 +156,7 @@ python3 -m unittest discover -s tests
 
 当前 V2.19.197，版本号在 `VERSION` 文件，界面标题与 CLI `--version` 都从这里读。
 
+- **V2.19.215** 看门狗（心跳检测 + 自动重启 + 日期续跑）
 - **V2.19.214** 每天递增模式支持终点并循环（1970→2000 共 30 年）
 - **V2.19.213** 自动提交热力图（真实时间）、自动填充仓库路径
 - **V2.19.212** macOS 通知开关、主题「跟随系统」
