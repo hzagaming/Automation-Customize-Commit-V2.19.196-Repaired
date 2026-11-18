@@ -519,7 +519,8 @@ async function load(){
   if(!fleet.length){
     fb.innerHTML = "<tr><td colspan='6' class='empty'>" + t('fleetEmpty') + "</td></tr>";
   } else {
-    const modeName = m => m === 'pre2000' ? t('modeRandom') : m === 'daily' ? t('modeDaily') : t('modeNow');
+    const modeName = m => m === 'pre2000' ? t('modeRandom') : m === 'daily' ? t('modeDaily')
+                   : m === 'range' ? t('modeRange') : t('modeNow');
     fb.innerHTML = fleet.map(n =>
       '<tr><td class="mono">'+n.name+'</td>'+
       '<td class="mono">'+n.repo+'</td>'+

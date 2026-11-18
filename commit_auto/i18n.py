@@ -16,6 +16,7 @@ LANGS = [
 
 I18N = {
     "en": {
+        "modeRange": "Custom range",
         "fleet": "Fleet", "fleetNode": "Node", "fleetRate": "Rate", "fleetMode": "Mode", "fleetBeat": "Heartbeat", "fleetAuto": "Auto", "fleetEmpty": "Fleet ∅",
         "autoHeat": "Auto commit heatmap (real time)",
         "themeSystem": "System",
@@ -51,6 +52,7 @@ I18N = {
         "accent": "Accent", "lang": "Language", "onlyLocal": "local only", "backdated": "backdated",
     },
     "zh-CN": {
+        "modeRange": "自定义区间",
         "fleet": "机群", "fleetNode": "节点", "fleetRate": "间隔", "fleetMode": "模式", "fleetBeat": "心跳", "fleetAuto": "自动提交", "fleetEmpty": "机群 ∅",
         "autoHeat": "自动提交热力图（真实时间）",
         "themeSystem": "跟随系统",
@@ -86,6 +88,7 @@ I18N = {
         "accent": "强调色", "lang": "语言", "onlyLocal": "仅本地", "backdated": "回填",
     },
     "zh-TW": {
+        "modeRange": "自訂區間",
         "fleet": "機群", "fleetNode": "節點", "fleetRate": "間隔", "fleetMode": "模式", "fleetBeat": "心跳", "fleetAuto": "自動提交", "fleetEmpty": "機群 ∅",
         "autoHeat": "自動提交熱力圖（真實時間）",
         "themeSystem": "跟隨系統",
@@ -121,6 +124,7 @@ I18N = {
         "accent": "強調色", "lang": "語言", "onlyLocal": "僅本機", "backdated": "回填",
     },
     "ja": {
+        "modeRange": "任意の範囲",
         "fleet": "ノード群", "fleetNode": "ノード", "fleetRate": "間隔", "fleetMode": "モード", "fleetBeat": "心拍", "fleetAuto": "自動", "fleetEmpty": "ノード群 ∅",
         "autoHeat": "自動コミットのヒートマップ（実際の時刻）",
         "themeSystem": "システム",
@@ -156,6 +160,7 @@ I18N = {
         "accent": "アクセント", "lang": "言語", "onlyLocal": "ローカルのみ", "backdated": "日時指定",
     },
     "ko": {
+        "modeRange": "사용자 범위",
         "fleet": "클러스터", "fleetNode": "노드", "fleetRate": "간격", "fleetMode": "모드", "fleetBeat": "하트비트", "fleetAuto": "자동", "fleetEmpty": "클러스터 ∅",
         "autoHeat": "자동 커밋 히트맵(실제 시간)",
         "themeSystem": "시스템",
@@ -191,6 +196,7 @@ I18N = {
         "accent": "강조색", "lang": "언어", "onlyLocal": "로컬만", "backdated": "시각 지정",
     },
     "es": {
+        "modeRange": "Rango propio",
         "fleet": "Flota", "fleetNode": "Nodo", "fleetRate": "Intervalo", "fleetMode": "Modo", "fleetBeat": "Latido", "fleetAuto": "Auto", "fleetEmpty": "Flota ∅",
         "autoHeat": "Mapa de commits automáticos (hora real)",
         "themeSystem": "Sistema",
@@ -226,6 +232,7 @@ I18N = {
         "accent": "Acento", "lang": "Idioma", "onlyLocal": "solo local", "backdated": "retroactivo",
     },
     "fr": {
+        "modeRange": "Plage perso.",
         "fleet": "Flotte", "fleetNode": "Nœud", "fleetRate": "Intervalle", "fleetMode": "Mode", "fleetBeat": "Battement", "fleetAuto": "Auto", "fleetEmpty": "Flotte ∅",
         "autoHeat": "Carte des commits auto (heure réelle)",
         "themeSystem": "Système",
@@ -261,6 +268,7 @@ I18N = {
         "accent": "Accent", "lang": "Langue", "onlyLocal": "local seul", "backdated": "rétroactif",
     },
     "de": {
+        "modeRange": "Eigener Bereich",
         "fleet": "Flotte", "fleetNode": "Knoten", "fleetRate": "Intervall", "fleetMode": "Modus", "fleetBeat": "Herzschlag", "fleetAuto": "Auto", "fleetEmpty": "Flotte ∅",
         "autoHeat": "Auto-Commit-Heatmap (Echtzeit)",
         "themeSystem": "System",
@@ -296,6 +304,7 @@ I18N = {
         "accent": "Akzent", "lang": "Sprache", "onlyLocal": "nur lokal", "backdated": "rückdatiert",
     },
     "ru": {
+        "modeRange": "Свой диапазон",
         "fleet": "Флот", "fleetNode": "Узел", "fleetRate": "Интервал", "fleetMode": "Режим", "fleetBeat": "Сигнал", "fleetAuto": "Авто", "fleetEmpty": "Флот ∅",
         "autoHeat": "Карта авто-коммитов (реальное время)",
         "themeSystem": "Система",
@@ -331,6 +340,7 @@ I18N = {
         "accent": "Акцент", "lang": "Язык", "onlyLocal": "только локально", "backdated": "задним числом",
     },
     "pt": {
+        "modeRange": "Intervalo próprio",
         "fleet": "Frota", "fleetNode": "Nó", "fleetRate": "Intervalo", "fleetMode": "Modo", "fleetBeat": "Batida", "fleetAuto": "Auto", "fleetEmpty": "Frota ∅",
         "autoHeat": "Mapa de commits automáticos (hora real)",
         "themeSystem": "Sistema",
@@ -366,6 +376,7 @@ I18N = {
         "accent": "Destaque", "lang": "Idioma", "onlyLocal": "só local", "backdated": "retroativo",
     },
     "ar": {
+        "modeRange": "نطاق مخصص",
         "fleet": "الأسطول", "fleetNode": "عقدة", "fleetRate": "الفاصل", "fleetMode": "الوضع", "fleetBeat": "النبض", "fleetAuto": "تلقائي", "fleetEmpty": "الأسطول ∅",
         "autoHeat": "خريطة الالتزامات التلقائية (الوقت الفعلي)",
         "themeSystem": "النظام",
