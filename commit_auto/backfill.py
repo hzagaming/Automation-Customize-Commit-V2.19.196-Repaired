@@ -7,6 +7,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import os
 import subprocess
 import sys
 import time
@@ -75,6 +77,26 @@ def chunked_push(repo: Path, chunk: int = 50000) -> bool:
     return True
 
 
+def stream_per_day(base: str, name: str, email: str, start: date, end: date,
+                   per_day: int, message: str):
+    """每天生成 per_day 个提交，时间在当天内均匀分布。"""
+    day = start
+    first = True
+    step = max(1, 86400 // per_day)
+    while day <= end:
+        for k in range(per_day):
+            ts = epoch(day) + k * step
+            digest = hashlib.sha256(os.urandom(16)).hexdigest()
+            payload = f"{message} {day.isoformat()} #{k + 1} {digest}\n".encode()
+            head = (f"author {name} <{email}> {ts} +0000\n"
+                    f"committer {name} <{email}> {ts} +0000\n")
+            from_line = f"from {base}\n" if first else ""
+            yield f"commit refs/heads/main\nmark :{ts}\n{head}data {len(payload)}\n".encode() \
+                + payload + from_line.encode()
+            first = False
+        day += timedelta(days=1)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="backfill")
     parser.add_argument("--repo", required=True)
@@ -82,6 +104,7 @@ def main() -> None:
     parser.add_argument("--end", default=date.today().isoformat())
     parser.add_argument("--step", type=int, default=1, help="每隔几天提交一次")
     parser.add_argument("--message", default="chore: backfill")
+    parser.add_argument("--per-day", type=int, help="每天生成多少个提交")
     parser.add_argument("--total", type=int, help="总共生成多少个提交（循环日期区间）")
     parser.add_argument("--loop", action="store_true", help="跑完一轮后从起始日期重新开始，永不停")
     parser.add_argument("--pause", type=int, default=300, help="两轮之间的间隔秒数")
@@ -100,7 +123,7 @@ def main() -> None:
     name, email = identity(repo)
     base = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True,
                           text=True).stdout.strip()
-    total = len(range(0, (end - start).days + 1, args.step))
+    total = ((end - start).days + 1) * (args.per_day or 0) or len(range(0, (end - start).days + 1, args.step))
     print(f"回填 {start} → {end}：{total} 个提交，基于 {base[:7]}，作者 {name} <{email}>", flush=True)
     if args.dry_run:
         return
@@ -114,7 +137,10 @@ def main() -> None:
                                   text=True).stdout.strip()
             proc = subprocess.Popen(["git", "fast-import", "--quiet"], cwd=repo, stdin=subprocess.PIPE)
             try:
-                for chunk in stream(base, name, email, start, end, args.step, args.message, args.total):
+                chunks = (stream_per_day(base, name, email, start, end, args.per_day, args.message)
+                          if args.per_day else
+                          stream(base, name, email, start, end, args.step, args.message, args.total))
+                for chunk in chunks:
                     proc.stdin.write(chunk)
                 proc.stdin.close()
                 ok = proc.wait() == 0
